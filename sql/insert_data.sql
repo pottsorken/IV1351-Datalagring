@@ -1,0 +1,1 @@
+-- INSERT INTO student (personal_number, name, sibling_id, instrument_quota, phone_number, email, contactperson_id, street_name_and_number, postal_code, city) VALUES ('', '', NULL, 2);

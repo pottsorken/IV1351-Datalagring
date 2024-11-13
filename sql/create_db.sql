@@ -1,0 +1,114 @@
+-- Create the database for the Soundgood music school
+CREATE DATABASE soundgoodmusic;
+
+-- Navigate in to the new database
+\c soundgoodmusic;
+
+-- Create tables
+CREATE TABLE student (
+    student_id SERIAL PRIMARY KEY, 
+    name VARCHAR(100) NOT NULL, 
+    personal_number VARCHAR(12) UNIQUE NOT NULL, 
+    sibling_id INT, 
+    instrument_quota INT, 
+    phone_number VARCHAR(15) NOT NULL, 
+    email VARCHAR(100) NOT NULL, 
+    contactperson_id INT, 
+    street_name_and_number VARCHAR(100) NOT NULL, 
+    postal_code VARCHAR(6) NOT NULL, 
+    city VARCHAR(100) NOT NULL, 
+
+    FOREIGN KEY (contactperson_id) REFERENCES contact_person (contactperson_id)
+    );
+
+CREATE TABLE contact_person (
+    contactperson_id SERIAL PRIMARY KEY, -- INT GENERATED ALWAYS AS IDENTITY(FK)
+    name VARCHAR(100) NOT NULL, 
+    phone_number VARCHAR(15) NOT NULL, 
+    email VARCHAR(100) NOT NULL,
+    relation VARCHAR(100)
+);
+
+CREATE TABLE instructor (
+    instructor_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    personal_number VARCHAR(12) UNIQUE NOT NULL,
+    phone_number VARCHAR(15) NOT NULL, 
+    email VARCHAR(100) NOT NULL,
+    street_name_and_number VARCHAR(100) NOT NULL, 
+    postal_code VARCHAR(6) NOT NULL, 
+    city VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE instrument_knowledge (
+    instructor_id INT NOT NULL, 
+    instrument_type_id INT NOT NULL, 
+    level_id INT NOT NULL, 
+
+    FOREIGN KEY (instructor_id) REFERENCES instructor (instructor_id), 
+    FOREIGN KEY (instrument_type_id) REFERENCES alternative_instrument (instrument_type_id), 
+    FOREIGN KEY (level_id) REFERENCES alternative_level (level_id), 
+    PRIMARY KEY (instructor_id, instrument_type_id) 
+);
+
+-- LESSONS
+CREATE TABLE lesson (
+    lesson_id SERIAL PRIMARY KEY, 
+    level_id INT NOT NULL,
+    date DATE,
+    state_id INT NOT NULL,
+    location VARCHAR(100),
+    slot_id
+-- TODO
+
+    FOREIGN KEY (level_id) REFERENCES alternative_level (level_id), 
+    FOREIGN KEY (state_id) REFERENCES alternative_state (state_id), 
+
+);
+
+CREATE TABLE individual_lesson (
+    instrument VARCHAR(50) NOT NULL
+) INHERITS (lesson);
+
+
+-- LEASES AND STUFF
+CREATE TABLE instrument (
+    instrument_id SERIAL PRIMARY KEY,
+    instrument_type_id INT NOT NULL, 
+    brand VARCHAR(100),
+    condition VARCHAR(200),
+    lease_price FLOAT NOT NULL,
+    on_lease BOOLEAN NOT NULL,
+
+    FOREIGN KEY (instrument_type_id) REFERENCES alternative_instrument (instrument_type_id)
+);
+
+CREATE TABLE lease (
+    lease_id SERIAL PRIMARY KEY,
+    start_of_lease DATE NOT NULL,
+    end_of_lease DATE,
+    active BOOLEAN NOT NULL,
+    done BOOLEAN NOT NULL,
+    instrument_id INT NOT NULL,
+    student_id INT,
+
+    FOREIGN KEY (instrument_id) REFERENCES instrument (instrument_id),
+    FOREIGN KEY (student_id) REFERENCES student (student_id)
+);
+
+
+-- Create help tables
+CREATE TABLE alternative_instrument (
+    instrument_type_id SERIAL PRIMARY KEY,
+    instrument_type VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE alternative_level (
+    level_id SERIAL PRIMARY KEY,
+    level VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE alternative_state (
+    state_id SERIAL PRIMARY KEY,
+    state VARCHAR(100) UNIQUE NOT NULL
+)
