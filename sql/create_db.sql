@@ -8,7 +8,7 @@ CREATE DATABASE soundgoodmusic;
 CREATE TABLE student (
     student_id SERIAL PRIMARY KEY, 
     name VARCHAR(100) NOT NULL, 
-    personal_number VARCHAR(12) UNIQUE NOT NULL, 
+    personal_number VARCHAR(13) UNIQUE NOT NULL, 
     sibling_id INT, 
     instrument_quota INT, 
     phone_number VARCHAR(15) NOT NULL, 
@@ -22,7 +22,7 @@ CREATE TABLE student (
     );
 
 CREATE TABLE contact_person (
-    contactperson_id SERIAL PRIMARY KEY, -- INT GENERATED ALWAYS AS IDENTITY(FK)
+    contactperson_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL, 
     phone_number VARCHAR(15) NOT NULL, 
     email VARCHAR(100) NOT NULL,
