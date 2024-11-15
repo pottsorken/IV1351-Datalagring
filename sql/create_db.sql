@@ -60,14 +60,19 @@ CREATE TABLE lesson (
     location VARCHAR(100),
     pricing_id INT NOT NULL,
     instructor_id INT NOT NULL,
+    slot_id INT NOT NULL
 
-    slot_id
--- TODO
     FOREIGN KEY (instructor_id) REFERENCES instructor (instructor_id),
     FOREIGN KEY (pricing_id) REFERENCES pricing (pricing_id),
     FOREIGN KEY (level_id) REFERENCES lookup_level (level_id), 
-    FOREIGN KEY (state_id) REFERENCES lookup_state (state_id) 
+    FOREIGN KEY (state_id) REFERENCES lookup_state (state_id),
+    FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id) 
 
+);
+CREATE TABLE timeslot(
+    slot_id SERIAL PRIMARY KEY,
+    start_of_slot CHAR(10),
+    end_of_slot CHAR(10)
 );
 
 CREATE TABLE individual_lesson (
@@ -140,11 +145,11 @@ CREATE TABLE student_lesson (
 
 CREATE TABLE timeslot_lesson (
     lesson_id INT NOT NULL,
-    timeslot_id INT NOT NULL,
+    slot_id INT NOT NULL,
 
-    FOREIGN KEY (timeslot_id) REFERENCES timeslot (timeslot_id),
+    FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id),
     FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
-    PRIMARY KEY (timeslot_id, lesson_id)
+    PRIMARY KEY (slot_id, lesson_id)
 );
 
 -- Create help tables
