@@ -138,6 +138,15 @@ CREATE TABLE student_lesson (
     PRIMARY KEY (student_id, lesson_id)
 );
 
+CREATE TABLE timeslot_lesson (
+    lesson_id INT NOT NULL,
+    timeslot_id INT NOT NULL,
+
+    FOREIGN KEY (timeslot_id) REFERENCES timeslot (timeslot_id),
+    FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
+    PRIMARY KEY (timeslot_id, lesson_id)
+);
+
 -- Create help tables
 CREATE TABLE lookup_instrument (
     instrument_type_id SERIAL PRIMARY KEY,
