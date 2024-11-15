@@ -46,8 +46,8 @@ CREATE TABLE instrument_knowledge (
     level_id INT NOT NULL, 
 
     FOREIGN KEY (instructor_id) REFERENCES instructor (instructor_id), 
-    FOREIGN KEY (instrument_type_id) REFERENCES alternative_instrument (instrument_type_id), 
-    FOREIGN KEY (level_id) REFERENCES alternative_level (level_id), 
+    FOREIGN KEY (instrument_type_id) REFERENCES lookup_instrument (instrument_type_id), 
+    FOREIGN KEY (level_id) REFERENCES lookup_level (level_id), 
     PRIMARY KEY (instructor_id, instrument_type_id) 
 );
 
@@ -58,11 +58,15 @@ CREATE TABLE lesson (
     date DATE,
     state_id INT NOT NULL,
     location VARCHAR(100),
+    pricing_id INT NOT NULL,
+    instructor_id INT NOT NULL,
+
     slot_id
 -- TODO
-
-    FOREIGN KEY (level_id) REFERENCES alternative_level (level_id), 
-    FOREIGN KEY (state_id) REFERENCES alternative_state (state_id), 
+    FOREIGN KEY (instructor_id) REFERENCES instructor (instructor_id),
+    FOREIGN KEY (pricing_id) REFERENCES pricing (pricing_id),
+    FOREIGN KEY (level_id) REFERENCES lookup_level (level_id), 
+    FOREIGN KEY (state_id) REFERENCES lookup_state (state_id) 
 
 );
 
@@ -70,8 +74,23 @@ CREATE TABLE individual_lesson (
     instrument VARCHAR(50) NOT NULL
 ) INHERITS (lesson);
 
+CREATE TABLE group_lesson (
+    instrument_type_id INT NOT NULL,
+    max_number_of_students INT, 
+    min_number_of_students INT NOT NULL,
+    registered_number_of_students INT NOT NULL,
 
--- LEASES AND STUFF
+    FOREIGN KEY (instrument_type_id) REFERENCES lookup_instrument (instrument_type_id)
+) INHERITS (lesson);
+
+CREATE TABLE ensamble_lesson (
+    genre VARCHAR(100) NOT NULL,
+    max_number_of_students INT, 
+    min_number_of_students INT NOT NULL,
+    registered_number_of_students INT NOT NULL
+) INHERITS (lesson);
+
+-- LEASES AND PAYMENT
 CREATE TABLE instrument (
     instrument_id SERIAL PRIMARY KEY,
     instrument_type_id INT NOT NULL, 
@@ -80,7 +99,7 @@ CREATE TABLE instrument (
     lease_price FLOAT NOT NULL,
     on_lease BOOLEAN NOT NULL,
 
-    FOREIGN KEY (instrument_type_id) REFERENCES alternative_instrument (instrument_type_id)
+    FOREIGN KEY (instrument_type_id) REFERENCES lookup_instrument (instrument_type_id)
 );
 
 CREATE TABLE lease (
@@ -96,19 +115,46 @@ CREATE TABLE lease (
     FOREIGN KEY (student_id) REFERENCES student (student_id)
 );
 
+CREATE TABLE pricing (
+    pricing_id  SERIAL PRIMARY KEY,
+    lookup_lesson_id INT NOT NULL,
+    level_id INT NOT NULL,
+    cost FLOAT NOT NULL,
+    valid BOOLEAN NOT NULL,
+    valid_from DATE NOT NULL,
+    valid_to DATE,
+
+    FOREIGN KEY (lookup_lesson_id) REFERENCES lookup_lesson (lookup_lesson_id),
+    FOREIGN KEY (level_id) REFERENCES lookup_level (level_id)
+);
+
+--create relation tables
+CREATE TABLE student_lesson (
+    student_id INT NOT NULL, 
+    lesson_id INT NOT NULL,
+
+    FOREIGN KEY (student_id) REFERENCES student (student_id),
+    FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
+    PRIMARY KEY (student_id, lesson_id)
+);
 
 -- Create help tables
-CREATE TABLE alternative_instrument (
+CREATE TABLE lookup_instrument (
     instrument_type_id SERIAL PRIMARY KEY,
     instrument_type VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE alternative_level (
+CREATE TABLE lookup_level (
     level_id SERIAL PRIMARY KEY,
     level VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE alternative_state (
+CREATE TABLE lookup_state (
     state_id SERIAL PRIMARY KEY,
     state VARCHAR(100) UNIQUE NOT NULL
 )
+
+CREATE TABLE lookup_lesson (
+    lookup_lesson_id SERIAL PRIMARY KEY,
+    type VARCHAR(100) NOT NULL
+);
