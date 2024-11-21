@@ -38,3 +38,54 @@ INSERT INTO instructor (name, personal_number, phone_number, email, street_name_
 ('Joakim Andersson', '19870101-1234', '+46709876575', 'joakim.andersson@email.se', 'Hammarby Sjöstad 8', '120 53', 'Stockholm'),
 ('Linda Falk', '19840630-2345', '+46704561276', 'linda.falk@email.se', 'Södra Förstadsgatan 21', '211 43', 'Malmö'),
 ('Johnny Persson', '19790118-3456', '+46703311277', 'johnny.persson@email.se', 'Sundsgatan 15', '252 23', 'Helsingborg');
+
+
+-- DATA FOR INSTRUMENT_KNOWLEDGE
+-- Inserting data for instrument_knowledge
+INSERT INTO instrument_knowledge (instructor_id, instrument_type_id, level_id) 
+VALUES
+(1, 6, 2),
+(2, 3, 3),
+(3, 9, 1),
+(4, 4, 2),
+(5, 6, 3),
+(5, 10, 1),
+(6, 2, 3),
+(7, 5, 1),
+(8, 4, 2),
+(8, 5, 1),
+(9, 8, 3),
+(10, 10, 3),
+(11, 1, 1),
+(12, 7, 1),
+(13, 7, 2),
+(14, 10, 1),
+(15, 2, 1),
+(16, 4, 3),
+(17, 3, 2),
+(18, 4, 2),
+(18, 7, 3),
+(19, 6, 1),
+(20, 2, 3),
+(20, 3, 3),
+(21, 2, 2),
+(22, 9, 3),
+(23, 5, 3),
+(24, 7, 1),
+(25, 6, 2),
+(25, 8, 1),
+(26, 9, 2),
+(27, 10, 3),
+(28, 1, 2),
+(29, 3, 1),
+(29, 5, 2),
+(30, 10, 2),
+(31, 8, 1),
+(33, 9, 2),
+(35, 1, 2),
+(35, 8, 1),
+(36, 6, 2);
+(37, 1, 3),
+(38, 6, 1),
+(39, 7, 1);
+

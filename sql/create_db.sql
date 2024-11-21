@@ -71,12 +71,12 @@ CREATE TABLE lesson (
 );
 CREATE TABLE timeslot(
     slot_id SERIAL PRIMARY KEY,
-    start_of_slot CHAR(10),
-    end_of_slot CHAR(10)
+    start_of_slot TIME(0),
+    end_of_slot TIME(0)
 );
 
 CREATE TABLE individual_lesson (
-    instrument VARCHAR(50) NOT NULL
+    instrument_type_id INT NOT NULL
 ) INHERITS (lesson);
 
 CREATE TABLE group_lesson (
@@ -88,7 +88,7 @@ CREATE TABLE group_lesson (
     FOREIGN KEY (instrument_type_id) REFERENCES lookup_instrument (instrument_type_id)
 ) INHERITS (lesson);
 
-CREATE TABLE ensamble_lesson (
+CREATE TABLE ensemble_lesson (
     genre VARCHAR(100) NOT NULL,
     max_number_of_students INT, 
     min_number_of_students INT NOT NULL,
@@ -126,8 +126,8 @@ CREATE TABLE pricing (
     level_id INT NOT NULL,
     cost FLOAT NOT NULL,
     valid BOOLEAN NOT NULL,
-    valid_from DATE NOT NULL,
-    valid_to DATE,
+--    valid_from DATE NOT NULL,
+--    valid_to DATE,
 
     FOREIGN KEY (lookup_lesson_id) REFERENCES lookup_lesson (lookup_lesson_id),
     FOREIGN KEY (level_id) REFERENCES lookup_level (level_id)
