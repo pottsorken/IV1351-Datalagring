@@ -20,22 +20,35 @@ CREATE TABLE lookup_level (
 CREATE TABLE lookup_state (
     state_id SERIAL PRIMARY KEY,
     state VARCHAR(100) UNIQUE NOT NULL
-)
+);
 
 CREATE TABLE lookup_lesson (
     lookup_lesson_id SERIAL PRIMARY KEY,
     type VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE pricing (
+    pricing_id  SERIAL PRIMARY KEY,
+    lookup_lesson_id INT NOT NULL,
+    level_id INT NOT NULL,
+    cost FLOAT NOT NULL,
+    valid BOOLEAN NOT NULL,
+
+    FOREIGN KEY (lookup_lesson_id) REFERENCES lookup_lesson (lookup_lesson_id),
+    FOREIGN KEY (level_id) REFERENCES lookup_level (level_id)
+);
 
 CREATE TABLE contact_person (
     contactperson_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL, 
-    phone_number VARCHAR(15) NOT NULL, 
+    phone_number VARCHAR(18) NOT NULL, 
     email VARCHAR(100) NOT NULL,
     relation VARCHAR(100)
 );
 
+CREATE TABLE sibling (
+    sibling_id SERIAL PRIMARY KEY
+);
 
 
 -- Create tables
@@ -52,14 +65,18 @@ CREATE TABLE student (
     postal_code VARCHAR(6) NOT NULL, 
     city VARCHAR(100) NOT NULL, 
 
-    FOREIGN KEY (contactperson_id) REFERENCES contact_person (contactperson_id)
+    FOREIGN KEY (contactperson_id) REFERENCES contact_person (contactperson_id),
+    FOREIGN KEY (sibling_id) REFERENCES sibling (sibling_id)
     );
 
+CREATE TABLE sibling (
+    sibling_id SERIAL PRIMARY KEY
+);
 
 CREATE TABLE instructor (
     instructor_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    personal_number VARCHAR(12) UNIQUE NOT NULL,
+    personal_number VARCHAR(13) UNIQUE NOT NULL,
     phone_number VARCHAR(15) NOT NULL, 
     email VARCHAR(100) NOT NULL,
     street_name_and_number VARCHAR(100) NOT NULL, 
@@ -79,6 +96,12 @@ CREATE TABLE instrument_knowledge (
 );
 
 -- LESSONS
+CREATE TABLE timeslot(
+    slot_id SERIAL PRIMARY KEY,
+    start_of_slot TIME(0),
+    end_of_slot TIME(0)
+);
+
 CREATE TABLE lesson (
     lesson_id SERIAL PRIMARY KEY, 
     level_id INT NOT NULL,
@@ -87,26 +110,20 @@ CREATE TABLE lesson (
     location VARCHAR(100),
     pricing_id INT NOT NULL,
     instructor_id INT NOT NULL,
-    slot_id INT NOT NULL
 
     FOREIGN KEY (instructor_id) REFERENCES instructor (instructor_id),
     FOREIGN KEY (pricing_id) REFERENCES pricing (pricing_id),
     FOREIGN KEY (level_id) REFERENCES lookup_level (level_id), 
-    FOREIGN KEY (state_id) REFERENCES lookup_state (state_id),
-    FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id) 
+    FOREIGN KEY (state_id) REFERENCES lookup_state (state_id)
+);
 
-);
-CREATE TABLE timeslot(
-    slot_id SERIAL PRIMARY KEY,
-    start_of_slot TIME(0),
-    end_of_slot TIME(0)
-);
+
 CREATE TABLE timeslot_lesson (
-    lesson_id INT NOT NULL,
     slot_id INT NOT NULL,
+    lesson_id INT NOT NULL,
 
-    FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id),
-    FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
+    --FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id),
+    --FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
     PRIMARY KEY (slot_id, lesson_id)
 );
 
@@ -119,8 +136,8 @@ CREATE TABLE group_lesson (
     max_number_of_students INT, 
     min_number_of_students INT NOT NULL,
     registered_number_of_students INT NOT NULL,
-
-    FOREIGN KEY (instrument_type_id) REFERENCES lookup_instrument (instrument_type_id)
+    
+FOREIGN KEY (instrument_type_id) REFERENCES lookup_instrument (instrument_type_id)
 ) INHERITS (lesson);
 
 CREATE TABLE ensemble_lesson (
@@ -155,26 +172,14 @@ CREATE TABLE lease (
     FOREIGN KEY (student_id) REFERENCES student (student_id)
 );
 
-CREATE TABLE pricing (
-    pricing_id  SERIAL PRIMARY KEY,
-    lookup_lesson_id INT NOT NULL,
-    level_id INT NOT NULL,
-    cost FLOAT NOT NULL,
-    valid BOOLEAN NOT NULL,
---    valid_from DATE NOT NULL,
---    valid_to DATE,
-
-    FOREIGN KEY (lookup_lesson_id) REFERENCES lookup_lesson (lookup_lesson_id),
-    FOREIGN KEY (level_id) REFERENCES lookup_level (level_id)
-);
 
 --create relation tables
 CREATE TABLE student_lesson (
     student_id INT NOT NULL, 
     lesson_id INT NOT NULL,
 
-    FOREIGN KEY (student_id) REFERENCES student (student_id),
-    FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
+    --FOREIGN KEY (student_id) REFERENCES student (student_id),
+    --FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
     PRIMARY KEY (student_id, lesson_id)
 );
 

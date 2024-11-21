@@ -10,7 +10,7 @@ SET registered_number_of_students = (
 --WHERE gl.lesson_id BETWEEN 11 AND 20;
 
 --ENSAMBLE LESSON
-UPDATE ensamble_lesson el
+UPDATE ensemble_lesson el
 SET registered_number_of_students = (
     SELECT COUNT(sl.student_id)
     FROM student_lesson sl

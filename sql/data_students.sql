@@ -12,6 +12,48 @@ INSERT INTO sibling (sibling_id) VALUES
 --  (INSERT INTO sibling (sibling_id) VALUES (DEFAULT) RETURNING sibling_id;)
 --);
 
+-- Contact people
+INSERT INTO contact_person (name, phone_number, email, relation) VALUES
+('Anna Svensson', '+46701234501', 'anna.svensson@email.se', 'Mother'),
+('Lars Karlsson', '+46709876502', 'lars.karlsson@email.se', 'Father'),
+('Maria Johansson', '+46704561203', 'maria.johansson@email.se', 'Mother'),
+('Erik Andersson', '+46703311204', 'erik.andersson@email.se', 'Guardian'),
+('Elisabeth Nilsson', '+46708123405', 'elisabeth.nilsson@email.se', 'Mother'),
+('Per Olsson', '+46701234506', 'per.olsson@email.se', 'Father'),
+('Karin Persson', '+46709876507', 'karin.persson@email.se', 'Guardian'),
+('Göran Lind', '+46704561208', 'goran.lind@email.se', 'Father'),
+('Ingrid Berg', '+46703311209', 'ingrid.berg@email.se', 'Mother'),
+('Sven Eriksson', '+46708123410', 'sven.eriksson@email.se', 'Father'),
+('Eva Holm', '+46701234511', 'eva.holm@email.se', 'Mother'),
+('Björn Sandberg', '+46709876512', 'bjorn.sandberg@email.se', 'Guardian'),
+('Lena Lund', '+46704561213', 'lena.lund@email.se', 'Mother'),
+('Tomas Håkansson', '+46703311214', 'tomas.hakansson@email.se', 'Father'),
+('Sofia Magnusson', '+46708123415', 'sofia.magnusson@email.se', 'Guardian'),
+('Gustav Öhman', '+46701234516', 'gustav.ohman@email.se', 'Father'),
+('Kristina Wallin', '+46709876517', 'kristina.wallin@email.se', 'Mother'),
+('Hans Blom', '+46704561218', 'hans.blom@email.se', 'Guardian'),
+('Camilla Eklund', '+46703311219', 'camilla.eklund@email.se', 'Mother'),
+('Fredrik Hall', '+46708123420', 'fredrik.hall@email.se', 'Father'),
+('Monica Nyström', '+46701234521', 'monica.nystrom@email.se', 'Mother'),
+('Robert Bergström', '+46709876522', 'robert.bergstrom@email.se', 'Father'),
+('Linda Ek', '+46704561223', 'linda.ek@email.se', 'Guardian'),
+('Henrik Holmgren', '+46703311224', 'henrik.holmgren@email.se', 'Father'),
+('Annika Ström', '+46708123425', 'annika.strom@email.se', 'Mother'),
+('Mikael Dahl', '+46701234526', 'mikael.dahl@email.se', 'Father'),
+('Susanne Lindberg', '+46709876527', 'susanne.lindberg@email.se', 'Guardian'),
+('Patrik Fors', '+46704561228', 'patrik.fors@email.se', 'Father'),
+('Sara Hermansson', '+46703311229', 'sara.hermansson@email.se', 'Mother'),
+('Johan Bäckström', '+46708123430', 'johan.backstrom@email.se', 'Guardian'),
+('Emelie Åkesson', '+46701234531', 'emelie.akesson@email.se', 'Mother'),
+('Daniel Lundgren', '+46709876532', 'daniel.lundgren@email.se', 'Father'),
+('Cecilia Månsson', '+46704561233', 'cecilia.mansson@email.se', 'Guardian'),
+('Oscar Falk', '+46703311234', 'oscar.falk@email.se', 'Father'),
+('Margareta Sjöberg', '+46708123435', 'margareta.sjoberg@email.se', 'Mother'),
+('Rikard Svensson', '+46701234536', 'rikard.svensson@email.se', 'Father'),
+('Hanna Persson', '+46709876537', 'hanna.persson@email.se', 'Mother'),
+('Tobias Jakobsson', '+46704561238', 'tobias.jakobsson@email.se', 'Guardian'),
+('Charlotte Lindén', '+46703311239', 'charlotte.linden@email.se', 'Mother'),
+('Jonas Östlund', '+46708123440', 'jonas.ostlund@email.se', 'Father');
 
 -- Students 4 pairs of siblings and no leased instruments
 INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_number, email, contactperson_id, street_name_and_number, postal_code, city) VALUES
@@ -122,48 +164,6 @@ INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_
 ('Hugo Sjöberg', '20041215-9797', NULL, 2, '+46708123400', 'hugo.sjoberg@email.se', 17, 'Örebrovägen 8', '703 54', 'Örebro');
 
 
--- Contact people
-INSERT INTO contact_person (name, phone_number, email, relation) VALUES
-('Anna Svensson', '+46701234501', 'anna.svensson@email.se', 'Mother'),
-('Lars Karlsson', '+46709876502', 'lars.karlsson@email.se', 'Father'),
-('Maria Johansson', '+46704561203', 'maria.johansson@email.se', 'Mother'),
-('Erik Andersson', '+46703311204', 'erik.andersson@email.se', 'Guardian'),
-('Elisabeth Nilsson', '+46708123405', 'elisabeth.nilsson@email.se', 'Mother'),
-('Per Olsson', '+46701234506', 'per.olsson@email.se', 'Father'),
-('Karin Persson', '+46709876507', 'karin.persson@email.se', 'Guardian'),
-('Göran Lind', '+46704561208', 'goran.lind@email.se', 'Father'),
-('Ingrid Berg', '+46703311209', 'ingrid.berg@email.se', 'Mother'),
-('Sven Eriksson', '+46708123410', 'sven.eriksson@email.se', 'Father'),
-('Eva Holm', '+46701234511', 'eva.holm@email.se', 'Mother'),
-('Björn Sandberg', '+46709876512', 'bjorn.sandberg@email.se', 'Guardian'),
-('Lena Lund', '+46704561213', 'lena.lund@email.se', 'Mother'),
-('Tomas Håkansson', '+46703311214', 'tomas.hakansson@email.se', 'Father'),
-('Sofia Magnusson', '+46708123415', 'sofia.magnusson@email.se', 'Guardian'),
-('Gustav Öhman', '+46701234516', 'gustav.ohman@email.se', 'Father'),
-('Kristina Wallin', '+46709876517', 'kristina.wallin@email.se', 'Mother'),
-('Hans Blom', '+46704561218', 'hans.blom@email.se', 'Guardian'),
-('Camilla Eklund', '+46703311219', 'camilla.eklund@email.se', 'Mother'),
-('Fredrik Hall', '+46708123420', 'fredrik.hall@email.se', 'Father'),
-('Monica Nyström', '+46701234521', 'monica.nystrom@email.se', 'Mother'),
-('Robert Bergström', '+46709876522', 'robert.bergstrom@email.se', 'Father'),
-('Linda Ek', '+46704561223', 'linda.ek@email.se', 'Guardian'),
-('Henrik Holmgren', '+46703311224', 'henrik.holmgren@email.se', 'Father'),
-('Annika Ström', '+46708123425', 'annika.strom@email.se', 'Mother'),
-('Mikael Dahl', '+46701234526', 'mikael.dahl@email.se', 'Father'),
-('Susanne Lindberg', '+46709876527', 'susanne.lindberg@email.se', 'Guardian'),
-('Patrik Fors', '+46704561228', 'patrik.fors@email.se', 'Father'),
-('Sara Hermansson', '+46703311229', 'sara.hermansson@email.se', 'Mother'),
-('Johan Bäckström', '+46708123430', 'johan.backstrom@email.se', 'Guardian'),
-('Emelie Åkesson', '+46701234531', 'emelie.akesson@email.se', 'Mother'),
-('Daniel Lundgren', '+46709876532', 'daniel.lundgren@email.se', 'Father'),
-('Cecilia Månsson', '+46704561233', 'cecilia.mansson@email.se', 'Guardian'),
-('Oscar Falk', '+46703311234', 'oscar.falk@email.se', 'Father'),
-('Margareta Sjöberg', '+46708123435', 'margareta.sjoberg@email.se', 'Mother'),
-('Rikard Svensson', '+46701234536', 'rikard.svensson@email.se', 'Father'),
-('Hanna Persson', '+46709876537', 'hanna.persson@email.se', 'Mother'),
-('Tobias Jakobsson', '+46704561238', 'tobias.jakobsson@email.se', 'Guardian'),
-('Charlotte Lindén', '+46703311239', 'charlotte.linden@email.se', 'Mother'),
-('Jonas Östlund', '+46708123440', 'jonas.ostlund@email.se', 'Father');
 
 
 
