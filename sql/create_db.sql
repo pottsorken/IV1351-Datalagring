@@ -4,6 +4,40 @@ CREATE DATABASE soundgoodmusic;
 -- Navigate in to the new database
 \c soundgoodmusic;
 
+
+--FOREIGN KEYS FIRST
+-- Create help tables
+CREATE TABLE lookup_instrument (
+    instrument_type_id SERIAL PRIMARY KEY,
+    instrument_type VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE lookup_level (
+    level_id SERIAL PRIMARY KEY,
+    level VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE lookup_state (
+    state_id SERIAL PRIMARY KEY,
+    state VARCHAR(100) UNIQUE NOT NULL
+)
+
+CREATE TABLE lookup_lesson (
+    lookup_lesson_id SERIAL PRIMARY KEY,
+    type VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE contact_person (
+    contactperson_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL, 
+    phone_number VARCHAR(15) NOT NULL, 
+    email VARCHAR(100) NOT NULL,
+    relation VARCHAR(100)
+);
+
+
+
 -- Create tables
 CREATE TABLE student (
     student_id SERIAL PRIMARY KEY, 
@@ -21,13 +55,6 @@ CREATE TABLE student (
     FOREIGN KEY (contactperson_id) REFERENCES contact_person (contactperson_id)
     );
 
-CREATE TABLE contact_person (
-    contactperson_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL, 
-    phone_number VARCHAR(15) NOT NULL, 
-    email VARCHAR(100) NOT NULL,
-    relation VARCHAR(100)
-);
 
 CREATE TABLE instructor (
     instructor_id SERIAL PRIMARY KEY,
@@ -73,6 +100,14 @@ CREATE TABLE timeslot(
     slot_id SERIAL PRIMARY KEY,
     start_of_slot TIME(0),
     end_of_slot TIME(0)
+);
+CREATE TABLE timeslot_lesson (
+    lesson_id INT NOT NULL,
+    slot_id INT NOT NULL,
+
+    FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id),
+    FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
+    PRIMARY KEY (slot_id, lesson_id)
 );
 
 CREATE TABLE individual_lesson (
@@ -143,32 +178,3 @@ CREATE TABLE student_lesson (
     PRIMARY KEY (student_id, lesson_id)
 );
 
-CREATE TABLE timeslot_lesson (
-    lesson_id INT NOT NULL,
-    slot_id INT NOT NULL,
-
-    FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id),
-    FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
-    PRIMARY KEY (slot_id, lesson_id)
-);
-
--- Create help tables
-CREATE TABLE lookup_instrument (
-    instrument_type_id SERIAL PRIMARY KEY,
-    instrument_type VARCHAR(100) UNIQUE NOT NULL
-);
-
-CREATE TABLE lookup_level (
-    level_id SERIAL PRIMARY KEY,
-    level VARCHAR(100) UNIQUE NOT NULL
-);
-
-CREATE TABLE lookup_state (
-    state_id SERIAL PRIMARY KEY,
-    state VARCHAR(100) UNIQUE NOT NULL
-)
-
-CREATE TABLE lookup_lesson (
-    lookup_lesson_id SERIAL PRIMARY KEY,
-    type VARCHAR(100) NOT NULL
-);
