@@ -1,9 +1,9 @@
 
---linking
-\i 'path/to/create_db.sql'        
-\i 'path/to/data_help_tables.sql'        
-\i 'path/to/data_instructors.sql'      
-\i 'path/to/data_instruments.sql'         
-\i 'path/to/data_students.sql'
-\i 'path/to/data_lessons.sql'
-\i 'path/to/update_scripts.sql'
+--linking together all the files
+\i 'create_db.sql'        
+\i 'data_help_tables.sql'        
+\i 'data_instructors.sql'      
+\i 'data_instruments.sql'         
+\i 'data_students.sql'
+\i 'data_lessons.sql'
+\i 'update_scripts.sql'
