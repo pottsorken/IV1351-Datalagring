@@ -123,6 +123,7 @@ CREATE TABLE timeslot_lesson (
     lesson_id INT NOT NULL,
 
     -- Perhaps prepend below with: CONSTRAINT fkey_slot & CONSTRAINT fkey_lesson
+    -- Append below with ON CASCADE DELETE might help issue
     --FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id),
     --FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
     PRIMARY KEY (slot_id, lesson_id)
