@@ -122,6 +122,7 @@ CREATE TABLE timeslot_lesson (
     slot_id INT NOT NULL,
     lesson_id INT NOT NULL,
 
+    -- Perhaps prepend below with: CONSTRAINT fkey_slot & CONSTRAINT fkey_lesson
     --FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id),
     --FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
     PRIMARY KEY (slot_id, lesson_id)
