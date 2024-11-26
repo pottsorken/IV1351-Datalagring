@@ -52,6 +52,10 @@ CREATE TABLE sibling (
 
 
 -- Create tables
+CREATE TABLE sibling (
+    sibling_id SERIAL PRIMARY KEY
+);
+
 CREATE TABLE student (
     student_id SERIAL PRIMARY KEY, 
     name VARCHAR(100) NOT NULL, 
@@ -69,9 +73,6 @@ CREATE TABLE student (
     FOREIGN KEY (sibling_id) REFERENCES sibling (sibling_id)
     );
 
-CREATE TABLE sibling (
-    sibling_id SERIAL PRIMARY KEY
-);
 
 CREATE TABLE instructor (
     instructor_id SERIAL PRIMARY KEY,
