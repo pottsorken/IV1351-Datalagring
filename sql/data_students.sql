@@ -161,7 +161,27 @@ INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_
 ('Thea Eklund', '20010924-9494', NULL, 2, '+46709876597', 'thea.eklund@email.se', NULL, 'Ågatan 10', '582 22', 'Linköping'),
 ('Lucas Falk', '20050311-9595', NULL, 2, '+46704561298', 'lucas.falk@email.se', NULL, 'Strandvägen 2', '114 56', 'Stockholm'),
 ('Emmy Sandström', '20030819-9696', NULL, 2, '+46703311299', 'emmy.sandstrom@email.se', NULL, 'Tullgatan 7', '722 12', 'Västerås'),
-('Hugo Sjöberg', '20041215-9797', NULL, 2, '+46708123400', 'hugo.sjoberg@email.se', 17, 'Örebrovägen 8', '703 54', 'Örebro');
+('Hugo Sjöberg', '20041215-9797', NULL, 2, '+46708123400', 'hugo.sjoberg@email.se', 17, 'Örebrovägen 8', '703 54', 'Örebro')
+('Isak Lindström', '20051123-5849', 8, 2, '+46702123456', 'isak.lindstrom@email.se', NULL, 'Köpmangatan 3', '114 32', 'Stockholm'),
+('Ella Berg', '20060112-4777', 15, 2, '+46701234567', 'ella.berg@email.se', 10, 'Storgatan 45', '441 28', 'Alingsås'),
+('Noah Eriksson', '20030714-5698', 3, 2, '+46709876543', 'noah.eriksson@email.se', NULL, 'Södergatan 21', '214 26', 'Malmö'),
+('Wilma Hansson', '20051209-8723', 12, 2, '+46707771234', 'wilma.hansson@email.se', 5, 'Hagagatan 9', '702 25', 'Örebro'),
+('Alexander Jansson', '20040205-8341', 20, 2, '+46705567890', 'alex.jansson@email.se', 8, 'Kungsgatan 12', '411 19', 'Göteborg'),
+('Maja Karlsson', '20050903-4729', 1, 2, '+46703333456', 'maja.karlsson@email.se', NULL, 'Smedjegatan 5', '602 32', 'Norrköping'),
+('Lucas Andersson', '20030822-2834', 9, 2, '+46708887654', 'lucas.andersson@email.se', 6, 'Fabriksgatan 2', '553 17', 'Jönköping'),
+('Clara Svensson', '20041218-9174', 13, 2, '+46706543210', 'clara.svensson@email.se', 2, 'Backavägen 4', '907 52', 'Umeå'),
+('Viktor Petersson', '20041115-6712', 17, 2, '+46705512345', 'viktor.petersson@email.se', NULL, 'Åvägen 11', '302 96', 'Halmstad'),
+('Olivia Gustavsson', '20050801-3876', 5, 2, '+46704112233', 'olivia.gustavsson@email.se', 7, 'Lundavägen 8', '221 84', 'Lund')
+('Felix Johansson', '20041102-3245', 10, 2, '+46702121212', 'felix.johansson@email.se', 4, 'Birger Jarlsgatan 21', '113 56', 'Stockholm'),
+('Alice Nyström', '20050825-5678', 7, 2, '+46701234544', 'alice.nystrom@email.se', NULL, 'Vallgatan 14', '431 35', 'Mölndal'),
+('Elliot Forsberg', '20030618-8769', 19, 2, '+46704567890', 'elliot.forsberg@email.se', 9, 'Bruksgatan 7', '281 32', 'Hässleholm'),
+('Astrid Viklund', '20040304-1923', 3, 2, '+46707770011', 'astrid.viklund@email.se', NULL, 'Åkervägen 12', '901 38', 'Umeå'),
+('William Holm', '20050915-6584', 14, 2, '+46705565656', 'william.holm@email.se', 2, 'Parkvägen 5', '752 36', 'Uppsala'),
+('Julia Åkesson', '20051210-2984', 5, 2, '+46705598822', 'julia.akesson@email.se', NULL, 'Lindvägen 3', '451 76', 'Uddevalla'),
+('Oskar Björk', '20040120-8421', 16, 2, '+46709988776', 'oskar.bjork@email.se', 3, 'Industrigatan 15', '291 38', 'Kristianstad'),
+('Freja Lundgren', '20051228-4389', 18, 2, '+46703334455', 'freja.lundgren@email.se', 6, 'Ringvägen 9', '116 21', 'Stockholm'),
+('Theo Sandberg', '20050906-1934', 11, 2, '+46704114477', 'theo.sandberg@email.se', NULL, 'Ekvägen 2', '621 41', 'Visby'),
+('Alva Norén', '20040625-1248', 2, 2, '+46705577666', 'alva.noren@email.se', 8, 'Furusundsgatan 8', '115 28', 'Stockholm');
 
 
 
