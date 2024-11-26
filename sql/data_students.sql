@@ -57,7 +57,6 @@ INSERT INTO contact_person (name, phone_number, email, relation) VALUES
 
 -- Students 4 pairs of siblings and no leased instruments
 INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_number, email, contactperson_id, street_name_and_number, postal_code, city) VALUES
-INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_number, email, contactperson_id, street_name_and_number, postal_code, city) VALUES
 ('Erik Johansson', '20030614-1234', NULL, 2, '+46701234567', 'erik.johansson@email.se', NULL, 'Sveavägen 12', '111 57', 'Stockholm'),
 ('Lina Larsson', '20011203-2345', NULL, 2, '+46704561234', 'lina.larsson@email.se', NULL, 'Storgatan 9', '752 18', 'Uppsala'),
 ('Jonas Andersson', '20051214-9876', NULL, 2, '+46703311234', 'jonas.andersson@email.se', NULL, 'Klarabergsgatan 50', '211 47', 'Malmö'),
