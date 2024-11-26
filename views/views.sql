@@ -19,40 +19,40 @@ GROUP BY
     EXTRACT(MONTH FROM a.date)
 ORDER BY EXTRACT(MONTH FROM a.date) ASC;
 
+
 -- 2. Show how many students there are with no sibling, with one sibling, with two siblings, etc.
 
 CREATE VIEW student_sibling AS
-SELECT 
-    COUNT(s.*) AS nSiblings
-    -- (
-    --     SELECT COUNT(*)
-    --     FROM students 
-    --     WHERE COUNT()
-    -- ) AS nStudents
-FROM 
-    student AS s
-GROUP BY 
-    sibling_id;
+WITH group_family AS (
+    SELECT COUNT(s.*) AS nSiblings
+        -- (
+        --     SELECT COUNT(*)
+        --     FROM students 
+        --     WHERE COUNT()
+        -- ) AS nStudents
+    FROM student AS s
+    GROUP BY sibling_id
+    )
+    
+SELECT COUNT(group_family) WHERE nSibnlings *is the same*
+SELECT nSiblings, SUM(nSiblings) AS num_students
+FROM student AS st
+GROUP BY nSiblings
 
 
 
-SELECT first_group_col, SUM(grouped_count) AS total_count
-FROM (
+
+
+-- exempelkod
+WITH first_group AS (
     SELECT first_group_col, COUNT(*) AS grouped_count
     FROM your_table
     GROUP BY first_group_col
-) subquery
-GROUP BY first_group_col;
-    
-
-(
-    SELECT COUNT(*)
-    FROM 
-        student AS s1,
-        student AS s2
-    WHERE 
-        s1.sibling_id = s2.sibling_id;     
 )
+SELECT first_group_col, SUM(grouped_count) AS total_count
+FROM first_group
+GROUP BY first_group_col;
+
 
 -- pseudo
     for all tupples
