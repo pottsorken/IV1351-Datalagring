@@ -2,16 +2,16 @@
 -- Insert into lesson table for individual_lesson
 INSERT INTO lesson (level_id, date, state_id, location, pricing_id, instructor_id)
 VALUES
-(1, '2024-11-21', 2, 'GroupRoom M', 5, 12),
-(2, '2024-11-22', 1, 'GroupRoom N', 10, 18),
-(3, '2024-11-23', 3, 'GroupRoom O', 7, 24),
-(1, '2024-11-24', 4, 'GroupRoom P', 3, 9),
-(2, '2024-11-25', 2, 'GroupRoom Q', 12, 15),
-(3, '2024-11-26', 1, 'GroupRoom R', 8, 30),
-(1, '2024-11-27', 3, 'GroupRoom S', 6, 5),
-(2, '2024-11-28', 4, 'GroupRoom T', 11, 20),
-(3, '2024-11-29', 2, 'GroupRoom U', 14, 27),
-(1, '2024-11-30', 1, 'GroupRoom V', 4, 33);
+(1, '2024-11-21', 2, 'Room M', 5, 12),
+(2, '2024-11-22', 1, 'Room N', 10, 18),
+(3, '2024-11-23', 3, 'Room O', 7, 24),
+(1, '2024-11-24', 4, 'Room P', 3, 9),
+(2, '2024-11-25', 2, 'Room Q', 12, 15),
+(3, '2024-11-26', 1, 'Room R', 8, 30),
+(1, '2024-11-27', 3, 'Room S', 6, 5),
+(2, '2024-11-28', 4, 'Room T', 11, 20),
+(3, '2024-11-29', 2, 'Room U', 14, 27),
+(1, '2024-11-30', 1, 'Room V', 4, 33);
 
 -- Insert into individual_lesson, inheriting from lesson
 INSERT INTO individual_lesson (lesson_id, instrument_type_id)
