@@ -1,87 +1,46 @@
 
--- Insert into lesson table for individual_lesson
-INSERT INTO lesson (level_id, date, state_id, location, pricing_id, instructor_id)
+-- DATA FOR INDIVIDUAL_LESSON
+INSERT INTO individual_lesson (level_id, date, state_id, location, pricing_id, instructor_id, instrument_type_id)
 VALUES
-(1, '2024-11-21', 2, 'Room M', 5, 12),
-(2, '2024-11-22', 1, 'Room N', 10, 18),
-(3, '2024-11-23', 3, 'Room O', 7, 24),
-(1, '2024-11-24', 4, 'Room P', 3, 9),
-(2, '2024-11-25', 2, 'Room Q', 12, 15),
-(3, '2024-11-26', 1, 'Room R', 8, 30),
-(1, '2024-11-27', 3, 'Room S', 6, 5),
-(2, '2024-11-28', 4, 'Room T', 11, 20),
-(3, '2024-11-29', 2, 'Room U', 14, 27),
-(1, '2024-11-30', 1, 'Room V', 4, 33);
+    (2, '2024-11-30', 1, 'Room J', 4, 33, 9),
+    (1, '2024-12-01', 2, 'Room K', 5, 12,  7),
+    (2, '2024-12-02', 4, 'Room L', 10, 18,  4),
+    (3, '2024-12-03', 3, 'Room M', 7, 5,  6),
+    (1, '2024-12-04', 1, 'Room N', 12, 25,  8),
+    (3, '2024-12-05', 3, 'Room O', 3, 20,  2),
+    (2, '2024-12-06', 4, 'Room P', 9, 30,  10),
+    (1, '2024-12-07', 2, 'Room Q', 4, 8,  5),
+    (2, '2024-12-08', 1, 'Room R', 8, 35,  1),
+    (3, '2024-12-09', 3, 'Room S', 15, 22,  9);
+ --   (1, '2024-12-10', 2, 'Room T', 18, 29, 12, 3);
 
--- Insert into individual_lesson, inheriting from lesson
-INSERT INTO individual_lesson (lesson_id, instrument_type_id)
-VALUES
-(1, 3),
-(2, 7),
-(3, 5),
-(4, 9),
-(5, 1),
-(6, 8),
-(7, 10),
-(8, 4),
-(9, 6),
-(10, 2);
+-- DATA FOR GROUP_LESSON
+    INSERT INTO group_lesson (level_id, date, state_id, location, pricing_id, instructor_id, instrument_type_id, max_number_of_students, min_number_of_students, registered_number_of_students)
+    VALUES
+    (1, '2024-11-21', 2, 'Room A', 3, 5,  1, 10, 5, 0),
+    (2, '2024-11-22', 4, 'Room B', 12, 8,  4, 15, 7, 0),
+    (3, '2024-11-23', 1, 'Room C', 7, 20,  3, 20, 10, 0),
+    (1, '2024-11-24', 3, 'Room D', 2, 15,  2, 12, 6, 0),
+    (2, '2024-11-25', 4, 'Room E', 9, 25,  6, 18, 8, 0),
+    (3, '2024-11-26', 2, 'Room F', 11, 18,  7, 25, 10, 0),
+    (1, '2024-11-27', 1, 'Room G', 5, 35,  8, 30, 12, 0),
+    (2, '2024-11-28', 3, 'Room H', 14, 29,  5, 20, 8, 0),
+    (3, '2024-11-29', 4, 'Room I', 16, 10,  10, 15, 5, 0),
+    (3, '2024-11-30', 3, 'Room J', 16, 10,  10, 15, 5, 0);
 
--- Insert into lesson table for group_lesson
-INSERT INTO lesson (level_id, date, state_id, location, pricing_id, instructor_id)
-VALUES
-(3, '2024-12-01', 1, 'Room E', 5, 11),
-(2, '2024-12-02', 2, 'Room F', 9, 25),
-(1, '2024-12-03', 3, 'Room H', 12, 19),
-(3, '2024-12-04', 4, 'Room I', 6, 8),
-(2, '2024-12-05', 1, 'Room A', 7, 26),
-(1, '2024-12-06', 2, 'Room F', 14, 13),
-(3, '2024-12-07', 3, 'Room E', 3, 37),
-(2, '2024-12-08', 4, 'Room B', 10, 21),
-(1, '2024-12-09', 1, 'Room C', 11, 4),
-(3, '2024-12-10', 2, 'Room D', 8, 36);
-
--- Insert into group_lesson, inheriting from lesson
-INSERT INTO group_lesson (lesson_id, instrument_type_id, max_number_of_students, min_number_of_students, registered_number_of_students)
-VALUES
-(11, 2, 15, 5, 10),
-(12, 7, 20, 6, 12),
-(13, 5, 18, 4, 14),
-(14, 9, 25, 8, 20),
-(15, 1, 12, 6, 8),
-(16, 8, 22, 5, 19),
-(17, 4, 16, 7, 14),
-(18, 10, 19, 6, 18),
-(19, 3, 17, 5, 13),
-(20, 6, 23, 9, 21);
-
--- Insert into lesson table for ensemble_lesson
-INSERT INTO lesson (level_id, date, state_id, location, pricing_id, instructor_id)
-VALUES
-(1, '2024-12-11', 3, 'Room A', 8, 14),
-(2, '2024-12-12', 4, 'Room B', 11, 34),
-(3, '2024-12-13', 1, 'Room C', 5, 22),
-(1, '2024-12-14', 2, 'Room D', 9, 29),
-(2, '2024-12-15', 3, 'Room E', 4, 16),
-(3, '2024-12-16', 4, 'Room F', 13, 28),
-(1, '2024-12-17', 1, 'Room A', 6, 32),
-(2, '2024-12-18', 2, 'Room B', 7, 6),
-(3, '2024-12-19', 3, 'Room C', 10, 17),
-(1, '2024-12-20', 4, 'Room D', 12, 35);
-
--- Insert into ensemble_lesson, inheriting from lesson
-INSERT INTO ensemble_lesson (lesson_id, genre, max_number_of_students, min_number_of_students, registered_number_of_students)
-VALUES
-(21, 'Classical', 10, 5, 7),
-(22, 'Jazz', 15, 7, 12),
-(23, 'Rock', 12, 6, 8),
-(24, 'Pop', 18, 5, 14),
-(25, 'Blues', 20, 8, 16),
-(26, 'Hip-hop', 25, 9, 22),
-(27, 'Folk', 14, 6, 11),
-(28, 'Country', 19, 7, 15),
-(29, 'Electronic', 13, 5, 10),
-(30, 'Reggae', 22, 8, 18);
+    --  DATA FOR ENSEMBLE
+    INSERT INTO ensemble_lesson (level_id, date, state_id, location, pricing_id, instructor_id, genre, max_number_of_students, min_number_of_students, registered_number_of_students)
+    VALUES
+    (1, '2024-11-21', 2, 'Room A', 3, 5,  'Jazz', 15, 5, 0),
+    (2, '2024-11-22', 4, 'Room B', 12, 8,  'Classical', 20, 8, 0),
+    (3, '2024-11-23', 1, 'Room C', 7, 20,  'Pop', 25, 10, 0),
+    (1, '2024-11-24', 3, 'Room D', 2, 15,  'Rock', 30, 12, 0),
+    (2, '2024-11-25', 4, 'Room E', 9, 25,  'Blues', 18, 6, 0),
+    (3, '2024-11-26', 2, 'Room F', 11, 18,  'Folk', 22, 9, 0),
+    (1, '2024-11-27', 1, 'Room G', 5, 35,  'Hip-hop', 25, 10, 0),
+    (2, '2024-11-28', 3, 'Room H', 14, 29,  'Latin', 18, 7, 0),
+    (3, '2024-11-29', 4, 'Room I', 16, 10,  'Reggae', 20, 8, 0),
+    (2, '2024-11-30', 1, 'Room J', 4, 33,  'Electronic', 15, 5, 0);
 
 
 
