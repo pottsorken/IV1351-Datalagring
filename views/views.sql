@@ -21,64 +21,31 @@ ORDER BY EXTRACT(MONTH FROM a.date) ASC;
 
 
 -- 2. Show how many students there are with no sibling, with one sibling, with two siblings, etc.
+-- NOTE: Complete!
 
 CREATE VIEW student_sibling AS
-WITH group_family AS (
+WITH group_siblings AS (
     SELECT COUNT(s.*) AS nSiblings
-        -- (
-        --     SELECT COUNT(*)
-        --     FROM students 
-        --     WHERE COUNT()
-        -- ) AS nStudents
     FROM student AS s
     GROUP BY sibling_id
+    HAVING s.sibling_id IS NOT NULL
     )
-    
-SELECT COUNT(group_family) WHERE nSibnlings group_family = COUNT(st.*)*is the same*
-SELECT nSiblings, SUM(nSiblings) AS num_students
-FROM student AS st
-GROUP BY nSiblings
+(SELECT 0 AS nsiblings, COUNT(*) AS nStudents -- Insert one tuple that count those without siblings
+FROM student
+WHERE student.sibling_id IS NULL)
+UNION ALL
+(SELECT gs.nsiblings, SUM(gs.nsiblings) AS nStudents
+FROM group_siblings AS gs
+GROUP BY gs.nSiblings
+ORDER BY gs.nSiblings ASC);
 
 
-
-
-
--- exempelkod
-WITH first_group AS (
-    SELECT first_group_col, COUNT(*) AS grouped_count
-    FROM your_table
-    GROUP BY first_group_col
-)
-SELECT first_group_col, SUM(grouped_count) AS total_count
-FROM first_group
-GROUP BY first_group_col;
-
-
--- pseudo
-    for all tupples
-        look at number n
-        add n to the final tupple (n-1)
-
-
-
-SELECT COUNT(customer_id), country
-FROM customers
-GROUP BY country;
-
-
-from students
-first column: num of siblings
-second column: select all with sibling id
-
-
-
-
-
+-- TODO: 
 -- 3. List ids and names of all instructors who has given more than a specific number of lessons during the current month.
 
 
 
-
+-- TODO: 
 -- 4. List all ensembles held during the next week
 
 
