@@ -57,6 +57,7 @@ INSERT INTO contact_person (name, phone_number, email, relation) VALUES
 
 -- Students 4 pairs of siblings and no leased instruments
 INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_number, email, contactperson_id, street_name_and_number, postal_code, city) VALUES
+INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_number, email, contactperson_id, street_name_and_number, postal_code, city) VALUES
 ('Erik Johansson', '20030614-1234', NULL, 2, '+46701234567', 'erik.johansson@email.se', NULL, 'Sveavägen 12', '111 57', 'Stockholm'),
 ('Lina Larsson', '20011203-2345', NULL, 2, '+46704561234', 'lina.larsson@email.se', NULL, 'Storgatan 9', '752 18', 'Uppsala'),
 ('Jonas Andersson', '20051214-9876', NULL, 2, '+46703311234', 'jonas.andersson@email.se', NULL, 'Klarabergsgatan 50', '211 47', 'Malmö'),
@@ -155,7 +156,7 @@ INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_
 ('Thea Eklund', '20010924-9494', NULL, 2, '+46709876597', 'thea.eklund@email.se', NULL, 'Ågatan 10', '582 22', 'Linköping'),
 ('Lucas Falk', '20050311-9595', NULL, 2, '+46704561298', 'lucas.falk@email.se', NULL, 'Strandvägen 2', '114 56', 'Stockholm'),
 ('Emmy Sandström', '20030819-9696', NULL, 2, '+46703311299', 'emmy.sandstrom@email.se', NULL, 'Tullgatan 7', '722 12', 'Västerås'),
-('Hugo Sjöberg', '20041215-9797', NULL, 2, '+46708123400', 'hugo.sjoberg@email.se', 17, 'Örebrovägen 8', '703 54', 'Örebro')
+('Hugo Sjöberg', '20041215-9797', NULL, 2, '+46708123400', 'hugo.sjoberg@email.se', 17, 'Örebrovägen 8', '703 54', 'Örebro'),
 ('Anna Svensson', '20040723-5678', 1, 2, '+46709876543', 'anna.svensson@email.se', 18, 'Kungsgatan 45', '123 21', 'Göteborg'),
 ('Julia Svensson', '20030905-6666', 1, 2, '+46701234511', 'julia.svensson@email.se', NULL, 'Järnvägsgatan 11', '722 11', 'Västerås'),
 ('Maja Karlsson', '20050903-4729', 1, 2, '+46703333456', 'maja.karlsson@email.se', NULL, 'Smedjegatan 5', '602 32', 'Norrköping'),
