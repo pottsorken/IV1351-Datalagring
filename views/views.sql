@@ -14,21 +14,50 @@ LEFT JOIN ensemble_lesson AS e ON a.lesson_id = e.lesson_id
 WHERE 
     a.state_id = 3
 GROUP BY 
-    TO_CHAR(a.date, 'Mon')
-ORDER BY TO_CHAR(a.date, 'Mon') ASC;
-
-
-
-
-
-
-
+    TO_CHAR(a.date, 'Mon'),
+    EXTRACT(MONTH FROM a.date)
+ORDER BY EXTRACT(MONTH FROM a.date) ASC;
 
 -- 2. Show how many students there are with no sibling, with one sibling, with two siblings, etc.
 
+CREATE VIEW student_sibling AS
+SELECT 
+    COUNT(s.*) AS nSiblings
+    -- (
+    --     SELECT COUNT(*)
+    --     FROM students 
+    --     WHERE COUNT()
+    -- ) AS nStudents
+FROM 
+    student AS s
+GROUP BY 
+    sibling_id, nSiblings;
+    
+
+(
+    SELECT COUNT(*)
+    FROM 
+        student AS s1,
+        student AS s2
+    WHERE 
+        s1.sibling_id = s2.sibling_id;     
+)
+
+-- pseudo
+    for all tupples
+        look at number n
+        add n to the final tupple (n-1)
+
+
+
+SELECT COUNT(customer_id), country
+FROM customers
+GROUP BY country;
+
+
 from students
 first column: num of siblings
-second column: elect all with sibling id
+second column: select all with sibling id
 
 
 
