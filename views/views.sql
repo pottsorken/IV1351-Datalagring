@@ -1,4 +1,6 @@
 
+-- TODO: Limit scope to a specific year
+-- Can be a static implementation
 -- 1. Show the number of lessons given per month during a specified year.
 CREATE VIEW lessons_per_month AS
 SELECT 
@@ -20,8 +22,8 @@ GROUP BY
 ORDER BY EXTRACT(MONTH FROM a.date) ASC;
 
 
--- 2. Show how many students there are with no sibling, with one sibling, with two siblings, etc.
 -- NOTE: Complete!
+-- 2. Show how many students there are with no sibling, with one sibling, with two siblings, etc.
 
 CREATE VIEW student_sibling AS
 WITH group_siblings AS (
@@ -29,20 +31,41 @@ WITH group_siblings AS (
     FROM student AS s
     GROUP BY sibling_id
     HAVING s.sibling_id IS NOT NULL
-    )
-(SELECT 0 AS nsiblings, COUNT(*) AS nStudents -- Insert one tuple that count those without siblings
+)
+-- Insert one tuple that count those without siblings
+(SELECT 0 AS nsiblings, COUNT(*) AS nStudents 
 FROM student
 WHERE student.sibling_id IS NULL)
 UNION ALL
+-- Sum the sibling groupings
 (SELECT gs.nsiblings, SUM(gs.nsiblings) AS nStudents
 FROM group_siblings AS gs
 GROUP BY gs.nSiblings
 ORDER BY gs.nSiblings ASC);
 
 
--- TODO: 
+-- NOTE: Complete! 
 -- 3. List ids and names of all instructors who has given more than a specific number of lessons during the current month.
 
+CREATE VIEW instructor_lessons AS
+WITH group_lessons AS (
+    SELECT l.instructor_id AS instructor_id, COUNT(l.*) AS nLessons
+    FROM lesson AS l
+    WHERE EXTRACT(MONTH FROM l.date) = EXTRACT(MONTH FROM CURRENT_DATE)
+    GROUP BY l.instructor_id
+)
+SELECT
+    i.instructor_id,
+    i.name,
+    group_lessons.nLessons
+FROM
+    instructor AS i
+INNER JOIN 
+    group_lessons
+    ON i.instructor_id = group_lessons.instructor_id
+WHERE group_lessons.nLessons > 1 -- Hardcoded
+ORDER BY 
+    group_lessons.nLessons DESC;
 
 
 -- TODO: 
