@@ -168,8 +168,7 @@ CREATE TABLE lease (
     student_id INT,
 
     FOREIGN KEY (instrument_id) REFERENCES instrument (instrument_id),
-    FOREIGN KEY (student_id) REFERENCES student (student_id),
-    ON DELETE CASCADE
+    FOREIGN KEY (student_id) REFERENCES student (student_id) ON DELETE CASCADE
 );
 
 
