@@ -18,15 +18,6 @@ GROUP BY
     TO_CHAR(a.date, 'Mon'),
     EXTRACT(MONTH FROM a.date)
 ORDER BY EXTRACT(MONTH FROM a.date) ASC;
-<<<<<<< Updated upstream
-=======
-
-
-
-
-
-
->>>>>>> Stashed changes
 
 -- 2. Show how many students there are with no sibling, with one sibling, with two siblings, etc.
 
@@ -41,7 +32,17 @@ SELECT
 FROM 
     student AS s
 GROUP BY 
-    sibling_id, nSiblings;
+    sibling_id;
+
+
+
+SELECT first_group_col, SUM(grouped_count) AS total_count
+FROM (
+    SELECT first_group_col, COUNT(*) AS grouped_count
+    FROM your_table
+    GROUP BY first_group_col
+) subquery
+GROUP BY first_group_col;
     
 
 (
