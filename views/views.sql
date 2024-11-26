@@ -34,7 +34,7 @@ WITH group_family AS (
     GROUP BY sibling_id
     )
     
-SELECT COUNT(group_family) WHERE nSibnlings *is the same*
+SELECT COUNT(group_family) WHERE nSibnlings group_family = COUNT(st.*)*is the same*
 SELECT nSiblings, SUM(nSiblings) AS num_students
 FROM student AS st
 GROUP BY nSiblings
@@ -75,6 +75,11 @@ second column: select all with sibling id
 
 
 -- 3. List ids and names of all instructors who has given more than a specific number of lessons during the current month.
+
+
+
+
+-- 4. List all ensembles held during the next week
 
 
 
