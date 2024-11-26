@@ -5,12 +5,6 @@ INSERT INTO sibling (sibling_id) VALUES
 (DEFAULT),
 (DEFAULT);
 
--- For later reference
-
--- INSERT INTO sibling (sibling_id) VALUES (DEFAULT) RETURNING sibling_id;
---INSERT INTO student (name, personal_number, sibling_id, ...) VALUES ('Julia Svensson', '20030905-6666',
---  (INSERT INTO sibling (sibling_id) VALUES (DEFAULT) RETURNING sibling_id;)
---);
 
 -- Contact people
 INSERT INTO contact_person (name, phone_number, email, relation) VALUES
@@ -167,7 +161,7 @@ INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_
 ('Astrid Viklund', '20040304-1923', 3, 2, '+46707770011', 'astrid.viklund@email.se', NULL, 'Åkervägen 12', '901 38', 'Umeå'),
 ('Maja Blomqvist', '20030114-2828', 4, 2, '+46701234531', 'maja.blomqvist@email.se', NULL, 'Vattugatan 4', '111 52', 'Stockholm'),
 ('Julia Åkesson', '20051210-2984', 5, 2, '+46705598822', 'julia.akesson@email.se', NULL, 'Lindvägen 3', '451 76', 'Uddevalla'),
-('Olivia Gustavsson', '20050801-3876', 5, 2, '+46704112233', 'olivia.gustavsson@email.se', 7, 'Lundavägen 8', '221 84', 'Lund')
+('Olivia Gustavsson', '20050801-3876', 5, 2, '+46704112233', 'olivia.gustavsson@email.se', 7, 'Lundavägen 8', '221 84', 'Lund'),
 ('Alice Nyström', '20050825-5678', 7, 2, '+46701234544', 'alice.nystrom@email.se', NULL, 'Vallgatan 14', '431 35', 'Mölndal'),
 ('Isak Lindström', '20051123-5849', 7, 2, '+46702123456', 'isak.lindstrom@email.se', NULL, 'Köpmangatan 3', '114 32', 'Stockholm'),
 ('Lucas Andersson', '20030822-2834', 9, 2, '+46708887654', 'lucas.andersson@email.se', 6, 'Fabriksgatan 2', '553 17', 'Jönköping'),
