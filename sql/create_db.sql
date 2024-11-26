@@ -52,10 +52,6 @@ CREATE TABLE sibling (
 
 
 -- Create tables
-CREATE TABLE sibling (
-    sibling_id SERIAL PRIMARY KEY
-);
-
 CREATE TABLE student (
     student_id SERIAL PRIMARY KEY, 
     name VARCHAR(100) NOT NULL, 
