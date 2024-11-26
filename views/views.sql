@@ -1,3 +1,4 @@
+
 -- 1. Show the number of lessons given per month during a specified year.
 CREATE VIEW lessons_per_month AS
 SELECT 
@@ -17,6 +18,15 @@ GROUP BY
     TO_CHAR(a.date, 'Mon'),
     EXTRACT(MONTH FROM a.date)
 ORDER BY EXTRACT(MONTH FROM a.date) ASC;
+<<<<<<< Updated upstream
+=======
+
+
+
+
+
+
+>>>>>>> Stashed changes
 
 -- 2. Show how many students there are with no sibling, with one sibling, with two siblings, etc.
 
@@ -64,6 +74,7 @@ second column: select all with sibling id
 
 
 -- 3. List ids and names of all instructors who has given more than a specific number of lessons during the current month.
+
 
 
 

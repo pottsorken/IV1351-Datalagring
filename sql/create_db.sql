@@ -33,6 +33,8 @@ CREATE TABLE pricing (
     level_id INT NOT NULL,
     cost FLOAT NOT NULL,
     valid BOOLEAN NOT NULL,
+--    valid_from DATE NOT NULL,
+--    valid_to DATE,
 
     FOREIGN KEY (lookup_lesson_id) REFERENCES lookup_lesson (lookup_lesson_id),
     FOREIGN KEY (level_id) REFERENCES lookup_level (level_id)
@@ -46,11 +48,10 @@ CREATE TABLE contact_person (
     relation VARCHAR(100)
 );
 
+
 CREATE TABLE sibling (
     sibling_id SERIAL PRIMARY KEY
 );
-
-
 -- Create tables
 CREATE TABLE student (
     student_id SERIAL PRIMARY KEY, 
@@ -58,7 +59,7 @@ CREATE TABLE student (
     personal_number VARCHAR(13) UNIQUE NOT NULL, 
     sibling_id INT, 
     instrument_quota INT, 
-    phone_number VARCHAR(15) NOT NULL, 
+    phone_number VARCHAR(18) NOT NULL, 
     email VARCHAR(100) NOT NULL, 
     contactperson_id INT, 
     street_name_and_number VARCHAR(100) NOT NULL, 
@@ -70,11 +71,12 @@ CREATE TABLE student (
     );
 
 
+
 CREATE TABLE instructor (
     instructor_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     personal_number VARCHAR(13) UNIQUE NOT NULL,
-    phone_number VARCHAR(15) NOT NULL, 
+    phone_number VARCHAR(18) NOT NULL, 
     email VARCHAR(100) NOT NULL,
     street_name_and_number VARCHAR(100) NOT NULL, 
     postal_code VARCHAR(6) NOT NULL, 
@@ -92,13 +94,12 @@ CREATE TABLE instrument_knowledge (
     PRIMARY KEY (instructor_id, instrument_type_id) 
 );
 
--- LESSONS
 CREATE TABLE timeslot(
     slot_id SERIAL PRIMARY KEY,
     start_of_slot TIME(0),
     end_of_slot TIME(0)
 );
-
+-- LESSONS
 CREATE TABLE lesson (
     lesson_id SERIAL PRIMARY KEY, 
     level_id INT NOT NULL,
@@ -112,22 +113,13 @@ CREATE TABLE lesson (
     FOREIGN KEY (pricing_id) REFERENCES pricing (pricing_id),
     FOREIGN KEY (level_id) REFERENCES lookup_level (level_id), 
     FOREIGN KEY (state_id) REFERENCES lookup_state (state_id)
+
 );
 
-
-CREATE TABLE timeslot_lesson (
-    slot_id INT NOT NULL,
-    lesson_id INT NOT NULL,
-
-    -- Perhaps prepend below with: CONSTRAINT fkey_slot & CONSTRAINT fkey_lesson
-    -- Append below with ON CASCADE DELETE might help issue
-    --FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id),
-    --FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
-    PRIMARY KEY (slot_id, lesson_id)
-);
-
+-- LEASES AND PAYMENT
 CREATE TABLE individual_lesson (
     instrument_type_id INT NOT NULL
+
 ) INHERITS (lesson);
 
 CREATE TABLE group_lesson (
@@ -135,8 +127,9 @@ CREATE TABLE group_lesson (
     max_number_of_students INT, 
     min_number_of_students INT NOT NULL,
     registered_number_of_students INT NOT NULL,
-    
-FOREIGN KEY (instrument_type_id) REFERENCES lookup_instrument (instrument_type_id)
+
+
+    FOREIGN KEY (instrument_type_id) REFERENCES lookup_instrument (instrument_type_id)
 ) INHERITS (lesson);
 
 CREATE TABLE ensemble_lesson (
@@ -144,9 +137,19 @@ CREATE TABLE ensemble_lesson (
     max_number_of_students INT, 
     min_number_of_students INT NOT NULL,
     registered_number_of_students INT NOT NULL
+
 ) INHERITS (lesson);
 
--- LEASES AND PAYMENT
+CREATE TABLE timeslot_lesson (
+    lesson_id INT NOT NULL,
+    slot_id INT NOT NULL,
+
+    --FOREIGN KEY (slot_id) REFERENCES timeslot (slot_id),
+    --FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id),
+    PRIMARY KEY (slot_id, lesson_id)
+);
+
+
 CREATE TABLE instrument (
     instrument_id SERIAL PRIMARY KEY,
     instrument_type_id INT NOT NULL, 
@@ -168,8 +171,9 @@ CREATE TABLE lease (
     student_id INT,
 
     FOREIGN KEY (instrument_id) REFERENCES instrument (instrument_id),
-    FOREIGN KEY (student_id) REFERENCES student (student_id) ON DELETE CASCADE
+    FOREIGN KEY (student_id) REFERENCES student (student_id)
 );
+
 
 
 --create relation tables
