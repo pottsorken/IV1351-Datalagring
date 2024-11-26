@@ -161,7 +161,7 @@ INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_
 ('Maja Karlsson', '20050903-4729', 1, 2, '+46703333456', 'maja.karlsson@email.se', NULL, 'Smedjegatan 5', '602 32', 'Norrköping'),
 ('Nils Persson', '20020317-5555', 2, 2, '+46708123410', 'nils.persson@email.se', 1, 'Östra Tullgatan 7', '241 32', 'Helsingborg'),
 ('Wilhelm Persson', '20051206-2121', 2, 2, '+46708123425', 'wilhelm.persson@email.se', 7, 'Kungsportsavenyen 14', '412 55', 'Göteborg'),
-('Alva Norén', '20040625-1248', 2, 2, '+46705577666', 'alva.noren@email.se', 8, 'Furusundsgatan 8', '115 28', 'Stockholm');
+('Alva Norén', '20040625-1248', 2, 2, '+46705577666', 'alva.noren@email.se', 8, 'Furusundsgatan 8', '115 28', 'Stockholm'),
 ('William Nyström', '20010913-4040', 3, 2, '+46704561243', 'william.nystrom@email.se', NULL, 'Södra Vägen 11', '411 35', 'Göteborg'),
 ('Noah Eriksson', '20030714-5698', 3, 2, '+46709876543', 'noah.eriksson@email.se', NULL, 'Södergatan 21', '214 26', 'Malmö'),
 ('Astrid Viklund', '20040304-1923', 3, 2, '+46707770011', 'astrid.viklund@email.se', NULL, 'Åkervägen 12', '901 38', 'Umeå'),
@@ -181,4 +181,4 @@ INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_
 ('Viktor Petersson', '20041115-6712', 18, 2, '+46705512345', 'viktor.petersson@email.se', NULL, 'Åvägen 11', '302 96', 'Halmstad'),
 ('Freja Lundgren', '20051228-4389', 18, 2, '+46703334455', 'freja.lundgren@email.se', 6, 'Ringvägen 9', '116 21', 'Stockholm'),
 ('Elliot Forsberg', '20030618-8769', 18, 2, '+46704567890', 'elliot.forsberg@email.se', 9, 'Bruksgatan 7', '281 32', 'Hässleholm'),
-('Alexander Jansson', '20040205-8341', 20, 2, '+46705567890', 'alex.jansson@email.se', 8, 'Kungsgatan 12', '411 19', 'Göteborg'),
+('Alexander Jansson', '20040205-8341', 20, 2, '+46705567890', 'alex.jansson@email.se', 8, 'Kungsgatan 12', '411 19', 'Göteborg');
