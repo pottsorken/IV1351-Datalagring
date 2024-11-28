@@ -1,6 +1,4 @@
 
--- TODO: Limit scope to a specific year
--- Can be a static implementation
 -- 1. Show the number of lessons given per month during a specified year.
 CREATE VIEW lessons_per_month AS
 SELECT 
@@ -15,14 +13,14 @@ LEFT JOIN individual_lesson AS i ON a.lesson_id = i.lesson_id
 LEFT JOIN group_lesson AS g ON a.lesson_id = g.lesson_id
 LEFT JOIN ensemble_lesson AS e ON a.lesson_id = e.lesson_id
 WHERE 
-    a.state_id = 3
+    a.state_id = 3 AND
+    EXTRACT(YEAR FROM a.date) = EXTRACT(YEAR FROM CURRENT_DATE)
 GROUP BY 
     TO_CHAR(a.date, 'Mon'),
     EXTRACT(MONTH FROM a.date)
 ORDER BY EXTRACT(MONTH FROM a.date) ASC;
 
 
--- NOTE: Complete!
 -- 2. Show how many students there are with no sibling, with one sibling, with two siblings, etc.
 
 CREATE VIEW student_sibling AS
@@ -44,7 +42,7 @@ GROUP BY gs.nSiblings
 ORDER BY gs.nSiblings ASC);
 
 
--- NOTE: Complete! 
+
 -- 3. List ids and names of all instructors who has given more than a specific number of lessons during the current month.
 
 CREATE VIEW instructor_lessons AS
@@ -68,7 +66,7 @@ ORDER BY
     group_of_lessons.nLessons DESC;
 
 
--- TODO: 
+
 -- 4. List all ensembles held during the next week
 CREATE VIEW ensembles AS 
 SELECT 
