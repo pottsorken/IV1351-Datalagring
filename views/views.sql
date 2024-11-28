@@ -48,7 +48,7 @@ ORDER BY gs.nSiblings ASC);
 -- 3. List ids and names of all instructors who has given more than a specific number of lessons during the current month.
 
 CREATE VIEW instructor_lessons AS
-WITH group_lessons AS (
+WITH group_of_lessons AS (
     SELECT l.instructor_id AS instructor_id, COUNT(l.*) AS nLessons
     FROM lesson AS l
     WHERE EXTRACT(MONTH FROM l.date) = EXTRACT(MONTH FROM CURRENT_DATE)
@@ -57,20 +57,35 @@ WITH group_lessons AS (
 SELECT
     i.instructor_id,
     i.name,
-    group_lessons.nLessons
+    group_of_lessons.nLessons
 FROM
     instructor AS i
 INNER JOIN 
-    group_lessons
-    ON i.instructor_id = group_lessons.instructor_id
-WHERE group_lessons.nLessons > 1 -- Hardcoded
+    group_of_lessons
+    ON i.instructor_id = group_of_lessons.instructor_id
+WHERE group_of_lessons.nLessons > 1 -- Hardcoded
 ORDER BY 
-    group_lessons.nLessons DESC;
+    group_of_lessons.nLessons DESC;
 
 
 -- TODO: 
 -- 4. List all ensembles held during the next week
-
-
+CREATE VIEW ensembles AS 
+SELECT 
+    TO_CHAR(e.date, 'Day') AS Day,
+    e.genre AS Genre,
+    CASE 
+        WHEN (e.max_number_of_students - e.registered_number_of_students) <= 0 THEN 'No Seats'
+        WHEN (e.max_number_of_students - e.registered_number_of_students) >= 1 AND 
+             (e.max_number_of_students - e.registered_number_of_students) <= 2 THEN '1 or 2 Seats'
+        ELSE 'Many Seats'
+    END AS no_of_free_seats
+FROM 
+    ensemble_lesson AS e
+WHERE 
+    EXTRACT(WEEK FROM e.date) = EXTRACT(WEEK FROM CURRENT_DATE) + 1
+ORDER BY
+    e.genre ASC, 
+    Day ASC;
 
 
