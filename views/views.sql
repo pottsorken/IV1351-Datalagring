@@ -30,13 +30,20 @@ WITH group_siblings AS (
     GROUP BY sibling_id
     HAVING s.sibling_id IS NOT NULL
 )
--- Insert one tuple that count those without siblings
-(SELECT 0 AS nsiblings, COUNT(*) AS nStudents 
+-- Retrieve number of all students with no siblings
+(SELECT 0 AS nsiblings, (COUNT(*) + 
+    (
+        -- Retrieve the amounts of students who have a sibling_id but no siblings
+        SELECT COUNT(*) AS amount
+        FROM group_siblings AS gs
+        WHERE gs.nSiblings = 1
+    )
+) AS nStudents 
 FROM student
-WHERE student.sibling_id IS NULL OR student.sibling_id = 1)
+WHERE student.sibling_id IS NULL)
 UNION ALL
 -- Sum the sibling groupings
-(SELECT (gs.nsiblings - 1) AS n_siblings, SUM(gs.nsiblings) AS n_students
+(SELECT (gs.nsiblings - 1) AS nSiblings, SUM(gs.nsiblings) AS nStudents
 FROM group_siblings AS gs
 WHERE gs.nSiblings <> 1 -- Non-1 values
 GROUP BY gs.nSiblings
