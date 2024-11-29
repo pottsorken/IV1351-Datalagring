@@ -167,7 +167,7 @@ INSERT INTO student (name, personal_number, sibling_id, instrument_quota, phone_
 ('Freja Dahl', '20020614-8888', NULL, 2, '+46701234591', 'freja.dahl@email.se', NULL, 'Kungsgatan 15', '411 23', 'Göteborg'),
 ('Milo Månsson', '20040427-8989', NULL, 2, '+46709876592', 'milo.mansson@email.se', 19, 'Fredsgatan 8', '111 52', 'Stockholm'),
 ('Nora Lundgren', '20050219-9090', NULL, 2, '+46704561293', 'nora.lundgren@email.se', NULL, 'Sankt Eriksgatan 18', '112 39', 'Stockholm'),
-('Oskar Nordin', '20030802-9191', NULL, 2, '+46703311294', 'oskar.nordin@email.se', 12, 'Västra Gatan 14', '442 31', 'Kungälv'),
+('Oskar Nordin', '20030802-9191', 9, 2, '+46703311294', 'oskar.nordin@email.se', 12, 'Västra Gatan 14', '442 31', 'Kungälv'),
 ('Stella Östberg', '20040929-9292', NULL, 2, '+46708123495', 'stella.ostberg@email.se', NULL, 'Södra Promenaden 1', '211 28', 'Malmö'),
 ('Viktor Håkansson', '20020707-9393', NULL, 2, '+46701234596', 'viktor.hakansson@email.se', 37, 'Stureplan 5', '114 35', 'Stockholm'),
 ('Thea Eklund', '20010924-9494', NULL, 2, '+46709876597', 'thea.eklund@email.se', NULL, 'Ågatan 10', '582 22', 'Linköping'),
