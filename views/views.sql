@@ -76,7 +76,7 @@ ORDER BY
 
 
 -- 4. List all ensembles held during the next week
-CREATE VIEW ensembles AS 
+CREATE MATERIALIZED VIEW ensembles AS 
 SELECT 
     TO_CHAR(e.date, 'Day') AS Day,
     e.genre AS Genre,
