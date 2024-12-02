@@ -1,15 +1,5 @@
 
-CREATE DATABASE historical_soundgood;
-
-\c historical_soundgood
-
 CREATE TYPE lesson_t AS ENUM ('Individual', 'Group', 'Ensemble');
-
--- Create help table
-CREATE TABLE lookup_instrument (
-    instrument_type_id SERIAL PRIMARY KEY,
-    instrument_type VARCHAR(100) UNIQUE NOT NULL
-);
 
 CREATE TABLE student_lesson_record (
     id SERIAL PRIMARY KEY,
@@ -22,13 +12,4 @@ CREATE TABLE student_lesson_record (
 
     FOREIGN KEY (instrument_type_id) REFERENCES lookup_instrument (instrument_type_id)
 );
-
-
-INSERT INTO lookup_instrument (instrument_type) 
-VALUES  ('Piano'), ('Violin'), ('Flute'), 
-        ('Trumpet'), ('Drums'), ('Saxophone'), 
-        ('Guitar'), ('Cello'), ('Clarinet'), 
-        ('Accordion');
-
-
 
