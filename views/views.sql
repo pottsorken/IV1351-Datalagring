@@ -91,7 +91,7 @@ FROM
 WHERE 
     EXTRACT(WEEK FROM e.date) = EXTRACT(WEEK FROM CURRENT_DATE) + 1
 ORDER BY
-    e.genre ASC, 
     Day ASC;
+    e.genre ASC, 
 
 
