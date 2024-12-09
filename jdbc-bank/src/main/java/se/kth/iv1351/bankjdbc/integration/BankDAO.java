@@ -259,7 +259,7 @@ public class BankDAO {
 
     private void connectToBankDB() throws ClassNotFoundException, SQLException {
         connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/bankdb",
-                "postgres", "postgres");
+                "broli", "12345");
         // connection =
         // DriverManager.getConnection("jdbc:mysql://localhost:3306/bankdb",
         // "mysql", "mysql");
