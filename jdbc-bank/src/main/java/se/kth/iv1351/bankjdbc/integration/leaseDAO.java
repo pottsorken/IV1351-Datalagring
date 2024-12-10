@@ -39,14 +39,27 @@ import se.kth.iv1351.bankjdbc.model.AccountDTO;
  * application. No code outside this class shall have any knowledge about the
  * database.
  */
-public class BankDAO {
-    private static final String HOLDER_TABLE_NAME = "holder";
-    private static final String HOLDER_PK_COLUMN_NAME = "holder_id";
-    private static final String HOLDER_COLUMN_NAME = "name";
-    private static final String ACCT_TABLE_NAME = "account";
-    private static final String ACCT_NO_COLUMN_NAME = "account_no";
+public class leaseDAO {
+    private static final String LESSEE_TABLE_NAME = "student";
+    private static final String LESSEE_PK_COLUMN_NAME = "student_id";
+    private static final String LESSEE_COLUMN_NAME = "name";
+
+    private static final String LEASE_TABLE_NAME = "lease";
+    private static final String LEASE_PK_COLUMN_NAME = "lease_id";
+    private static final String LEASE_ID_COLUMN_NAME = "lease_id";
+
+    private static final String LOOKUP_INSTRUMENT_TABLE_NAME = "lookup_instrument";
+    private static final String LOOKUP_INSTRUMENT_PK_COLUMN_NAME = "instrument_type_id";
+    private static final String LOOKUP_INSTRUMENT_COLUMN_NAME = "instrument_type";
+
+    private static final String INSTRUMENT_TABLE_NAME = "instrument";
+    private static final String INSTRUMENT_PK_COLUMN_NAME = "instrument_id";
+    private static final String INSTRUMENT_PRICE_COLUMN_NAME = "lease_price";
+    private static final String INSTRUMENT_AVAILABILITY_COLUMN_NAME = "on_lease";
+    private static final String INSTRUMENT_TYPE_FK_COLUMN_NAME = LOOKUP_INSTRUMENT_PK_COLUMN_NAME;
+
     private static final String BALANCE_COLUMN_NAME = "balance";
-    private static final String HOLDER_FK_COLUMN_NAME = HOLDER_PK_COLUMN_NAME;
+    private static final String HOLDER_FK_COLUMN_NAME = LESSEE_PK_COLUMN_NAME;
 
     private Connection connection;
     private PreparedStatement createHolderStmt;
@@ -62,7 +75,7 @@ public class BankDAO {
     /**
      * Constructs a new DAO object connected to the bank database.
      */
-    public BankDAO() throws BankDBException {
+    public leaseDAO() throws BankDBException {
         try {
             connectToBankDB();
             prepareStatements();
@@ -134,8 +147,8 @@ public class BankDAO {
             stmtToExecute.setString(1, acctNo);
             result = stmtToExecute.executeQuery();
             if (result.next()) {
-                return new Account(result.getString(ACCT_NO_COLUMN_NAME),
-                        result.getString(HOLDER_COLUMN_NAME),
+                return new Account(result.getString(LEASE_ID_COLUMN_NAME),
+                        result.getString(LESSEE_COLUMN_NAME),
                         result.getInt(BALANCE_COLUMN_NAME));
             }
             if (!lockExclusive) {
@@ -165,8 +178,8 @@ public class BankDAO {
             findAccountByNameStmt.setString(1, holderName);
             result = findAccountByNameStmt.executeQuery();
             while (result.next()) {
-                accounts.add(new Account(result.getString(ACCT_NO_COLUMN_NAME),
-                        result.getString(HOLDER_COLUMN_NAME),
+                accounts.add(new Account(result.getString(LEASE_ID_COLUMN_NAME),
+                        result.getString(LESSEE_COLUMN_NAME),
                         result.getInt(BALANCE_COLUMN_NAME)));
             }
             connection.commit();
@@ -190,8 +203,8 @@ public class BankDAO {
         List<Account> accounts = new ArrayList<>();
         try (ResultSet result = findAllAccountsStmt.executeQuery()) {
             while (result.next()) {
-                accounts.add(new Account(result.getString(ACCT_NO_COLUMN_NAME),
-                        result.getString(HOLDER_COLUMN_NAME),
+                accounts.add(new Account(result.getString(LEASE_ID_COLUMN_NAME),
+                        result.getString(LESSEE_COLUMN_NAME),
                         result.getInt(BALANCE_COLUMN_NAME)));
             }
             connection.commit();
@@ -258,7 +271,7 @@ public class BankDAO {
     }
 
     private void connectToBankDB() throws ClassNotFoundException, SQLException {
-        connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/bankdb",
+        connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/soundgoodmusic",
                 "broli", "12345");
         // connection =
         // DriverManager.getConnection("jdbc:mysql://localhost:3306/bankdb",
@@ -267,43 +280,43 @@ public class BankDAO {
     }
 
     private void prepareStatements() throws SQLException {
-        createHolderStmt = connection.prepareStatement("INSERT INTO " + HOLDER_TABLE_NAME
-                + "(" + HOLDER_COLUMN_NAME + ") VALUES (?)");
+        createHolderStmt = connection.prepareStatement("INSERT INTO " + LESSEE_TABLE_NAME
+                + "(" + LESSEE_COLUMN_NAME + ") VALUES (?)");
 
-        createAccountStmt = connection.prepareStatement("INSERT INTO " + ACCT_TABLE_NAME
-                + "(" + ACCT_NO_COLUMN_NAME + ", " + BALANCE_COLUMN_NAME + ", "
+        createAccountStmt = connection.prepareStatement("INSERT INTO " + LEASE_TABLE_NAME
+                + "(" + LEASE_ID_COLUMN_NAME + ", " + BALANCE_COLUMN_NAME + ", "
                 + HOLDER_FK_COLUMN_NAME + ") VALUES (?, ?, ?)");
 
-        findHolderPKStmt = connection.prepareStatement("SELECT " + HOLDER_PK_COLUMN_NAME
-                + " FROM " + HOLDER_TABLE_NAME + " WHERE " + HOLDER_COLUMN_NAME + " = ?");
+        findHolderPKStmt = connection.prepareStatement("SELECT " + LESSEE_PK_COLUMN_NAME
+                + " FROM " + LESSEE_TABLE_NAME + " WHERE " + LESSEE_COLUMN_NAME + " = ?");
 
-        findAccountByAcctNoStmt = connection.prepareStatement("SELECT a." + ACCT_NO_COLUMN_NAME
-                + ", a." + BALANCE_COLUMN_NAME + ", h." + HOLDER_COLUMN_NAME + " from "
-                + ACCT_TABLE_NAME + " a INNER JOIN " + HOLDER_TABLE_NAME + " h USING ("
-                + HOLDER_PK_COLUMN_NAME + ") WHERE a." + ACCT_NO_COLUMN_NAME + " = ?");
+        findAccountByAcctNoStmt = connection.prepareStatement("SELECT a." + LEASE_ID_COLUMN_NAME
+                + ", a." + BALANCE_COLUMN_NAME + ", h." + LESSEE_COLUMN_NAME + " from "
+                + LEASE_TABLE_NAME + " a INNER JOIN " + LESSEE_TABLE_NAME + " h USING ("
+                + LESSEE_PK_COLUMN_NAME + ") WHERE a." + LEASE_ID_COLUMN_NAME + " = ?");
 
         findAccountByAcctNoStmtLockingForUpdate = connection.prepareStatement("SELECT a."
-                + ACCT_NO_COLUMN_NAME + ", a." + BALANCE_COLUMN_NAME + ", h."
-                + HOLDER_COLUMN_NAME + " from " + ACCT_TABLE_NAME + " a INNER JOIN "
-                + HOLDER_TABLE_NAME + " h USING (" + HOLDER_PK_COLUMN_NAME + ") WHERE a."
-                + ACCT_NO_COLUMN_NAME + " = ? FOR NO KEY UPDATE");
+                + LEASE_ID_COLUMN_NAME + ", a." + BALANCE_COLUMN_NAME + ", h."
+                + LESSEE_COLUMN_NAME + " from " + LEASE_TABLE_NAME + " a INNER JOIN "
+                + LESSEE_TABLE_NAME + " h USING (" + LESSEE_PK_COLUMN_NAME + ") WHERE a."
+                + LEASE_ID_COLUMN_NAME + " = ? FOR NO KEY UPDATE");
 
-        findAccountByNameStmt = connection.prepareStatement("SELECT a." + ACCT_NO_COLUMN_NAME
-                + ", a." + BALANCE_COLUMN_NAME + ", h." + HOLDER_COLUMN_NAME + " from "
-                + ACCT_TABLE_NAME + " a INNER JOIN "
-                + HOLDER_TABLE_NAME + " h ON a." + HOLDER_FK_COLUMN_NAME
-                + " = h." + HOLDER_PK_COLUMN_NAME + " WHERE h." + HOLDER_COLUMN_NAME + " = ?");
+        findAccountByNameStmt = connection.prepareStatement("SELECT a." + LEASE_ID_COLUMN_NAME
+                + ", a." + BALANCE_COLUMN_NAME + ", h." + LESSEE_COLUMN_NAME + " from "
+                + LEASE_TABLE_NAME + " a INNER JOIN "
+                + LESSEE_TABLE_NAME + " h ON a." + HOLDER_FK_COLUMN_NAME
+                + " = h." + LESSEE_PK_COLUMN_NAME + " WHERE h." + LESSEE_COLUMN_NAME + " = ?");
 
-        findAllAccountsStmt = connection.prepareStatement("SELECT h." + HOLDER_COLUMN_NAME
-                + ", a." + ACCT_NO_COLUMN_NAME + ", a." + BALANCE_COLUMN_NAME + " FROM "
-                + HOLDER_TABLE_NAME + " h INNER JOIN " + ACCT_TABLE_NAME + " a ON a."
-                + HOLDER_FK_COLUMN_NAME + " = h." + HOLDER_PK_COLUMN_NAME);
+        findAllAccountsStmt = connection.prepareStatement("SELECT h." + LESSEE_COLUMN_NAME
+                + ", a." + LEASE_ID_COLUMN_NAME + ", a." + BALANCE_COLUMN_NAME + " FROM "
+                + LESSEE_TABLE_NAME + " h INNER JOIN " + LEASE_TABLE_NAME + " a ON a."
+                + HOLDER_FK_COLUMN_NAME + " = h." + LESSEE_PK_COLUMN_NAME);
 
-        changeBalanceStmt = connection.prepareStatement("UPDATE " + ACCT_TABLE_NAME
-                + " SET " + BALANCE_COLUMN_NAME + " = ? WHERE " + ACCT_NO_COLUMN_NAME + " = ? ");
+        changeBalanceStmt = connection.prepareStatement("UPDATE " + LEASE_TABLE_NAME
+                + " SET " + BALANCE_COLUMN_NAME + " = ? WHERE " + LEASE_ID_COLUMN_NAME + " = ? ");
 
-        deleteAccountStmt = connection.prepareStatement("DELETE FROM " + ACCT_TABLE_NAME
-                + " WHERE " + ACCT_NO_COLUMN_NAME + " = ?");
+        deleteAccountStmt = connection.prepareStatement("DELETE FROM " + LEASE_TABLE_NAME
+                + " WHERE " + LEASE_ID_COLUMN_NAME + " = ?");
     }
 
     private void handleException(String failureMsg, Exception cause) throws BankDBException {
@@ -339,7 +352,7 @@ public class BankDAO {
         findHolderPKStmt.setString(1, holderName);
         result = findHolderPKStmt.executeQuery();
         if (result.next()) {
-            return result.getInt(HOLDER_PK_COLUMN_NAME);
+            return result.getInt(LESSEE_PK_COLUMN_NAME);
         }
         return 0;
     }
