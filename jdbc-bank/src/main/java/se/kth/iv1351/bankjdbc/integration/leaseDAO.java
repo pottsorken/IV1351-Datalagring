@@ -47,6 +47,12 @@ public class leaseDAO {
 
     private static final String LEASE_TABLE_NAME = "lease";
     private static final String LEASE_PK_COLUMN_NAME = "lease_id";
+    private static final String LEASE_LESSEE_FK_COLUMN_NAME = "student_id";
+    private static final String LEASE_INSTRUMENT_FK_COLUMN_NAME = "instrument_id";
+    private static final String LEASE_ONGOING_COLUMN_NAME = "active";
+    private static final String LEASE_COMPLETE_COLUMN_NAME = "done";
+    private static final String LEASE_START_COLUMN_NAME = "start_of_lease";
+    private static final String LEASE_END_COLUMN_NAME = "end_of_lease";
 
     private static final String LOOKUP_INSTRUMENT_TABLE_NAME = "lookup_instrument";
     private static final String LOOKUP_INSTRUMENT_PK_COLUMN_NAME = "instrument_type_id";
@@ -65,9 +71,12 @@ public class leaseDAO {
     private Connection connection;
     private PreparedStatement findAllInstrumentsStmt;
     private PreparedStatement findInstrumentsByTypeStmt;
+    private PreparedStatement findAllLookupInstrumentsStmt;
     private PreparedStatement findAllStudentsStmt;
+    private PreparedStatement findQuotaByStudentStmt;
     private PreparedStatement createLeaseStmt;
     private PreparedStatement changeLeaseStmt;
+    private PreparedStatement findAllLeasesStmt;
     private PreparedStatement findLeasesByStudentStmt;
 
     // private PreparedStatement createHolderStmt;
@@ -278,6 +287,7 @@ public class leaseDAO {
         }
     }
 
+    // TODO: change name of method
     private void connectToBankDB() throws ClassNotFoundException, SQLException {
         connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/soundgoodmusic",
                 "broli", "12345");
@@ -299,6 +309,43 @@ public class leaseDAO {
                 + INSTRUMENT_ON_LEASE_COLUMN_NAME + " = FALSE INNER JOIN " + LOOKUP_INSTRUMENT_TABLE_NAME
                 + " AS t ON t." + LOOKUP_INSTRUMENT_PK_COLUMN_NAME + " = i." + INSTRUMENT_TYPE_FK_COLUMN_NAME);
 
+        findInstrumentsByTypeStmt = connection.prepareStatement("SELECT i." + INSTRUMENT_PK_COLUMN_NAME + ", t."
+                + LOOKUP_INSTRUMENT_COLUMN_NAME + ", i." + INSTRUMENT_BRAND_COLUMN_NAME + ", i."
+                + INSTRUMENT_PRICE_COLUMN_NAME + " FROM " + INSTRUMENT_TABLE_NAME + " AS i WHERE i."
+                + INSTRUMENT_ON_LEASE_COLUMN_NAME + " = FALSE AND t." + LOOKUP_INSTRUMENT_COLUMN_NAME + " = ?"
+                + " INNER JOIN " + LOOKUP_INSTRUMENT_TABLE_NAME
+                + " AS t ON t." + LOOKUP_INSTRUMENT_PK_COLUMN_NAME + " = i." + INSTRUMENT_TYPE_FK_COLUMN_NAME);
+
+        findAllLookupInstrumentsStmt = connection.prepareStatement(
+                "SELECT l." + LOOKUP_INSTRUMENT_COLUMN_NAME + " FROM " + LOOKUP_INSTRUMENT_TABLE_NAME + " AS l");
+
+        findQuotaByStudentStmt = connection.prepareStatement("SELECT s." + LESSEE_QUOTA_COLUMN_NAME + " FROM "
+                + LESSEE_TABLE_NAME + " AS s WHERE s." + LESSEE_PK_COLUMN_NAME + " = ?");
+
+        findAllLeasesStmt = connection
+                .prepareStatement(
+                        "SELECT l." + LEASE_PK_COLUMN_NAME + ", l." + LEASE_LESSEE_FK_COLUMN_NAME + ", l."
+                                + LEASE_ONGOING_COLUMN_NAME + ", l." + LEASE_COMPLETE_COLUMN_NAME + ", l."
+                                + LEASE_START_COLUMN_NAME + ", l." + LEASE_END_COLUMN_NAME + " FROM " + LEASE_TABLE_NAME
+                                + " AS l");
+
+        findLeasesByStudentStmt = connection
+                .prepareStatement(
+                        "SELECT l." + LEASE_PK_COLUMN_NAME + ", l." + LEASE_LESSEE_FK_COLUMN_NAME + ", l."
+                                + LEASE_ONGOING_COLUMN_NAME + ", l." + LEASE_COMPLETE_COLUMN_NAME + ", l."
+                                + LEASE_START_COLUMN_NAME + ", l." + LEASE_END_COLUMN_NAME + " FROM " + LEASE_TABLE_NAME
+                                + " AS l WHERE l." + LEASE_LESSEE_FK_COLUMN_NAME + " = ?");
+
+        createLeaseStmt = connection.prepareStatement("INSERT INTO " + LEASE_TABLE_NAME + "("
+                + LEASE_ONGOING_COLUMN_NAME + ", " + LEASE_COMPLETE_COLUMN_NAME + ", " + LEASE_START_COLUMN_NAME + ", "
+                + LEASE_INSTRUMENT_FK_COLUMN_NAME + ", " + LEASE_LESSEE_FK_COLUMN_NAME
+                + ") VALUES (TRUE, FALSE, CURRENT_DATE, ?, ?)");
+
+        changeLeaseStmt = connection.prepareStatement("UPDATE " + LEASE_TABLE_NAME + " SET " + LEASE_ONGOING_COLUMN_NAME
+                + " = ? WHERE " + LEASE_PK_COLUMN_NAME + " = ?");
+
+        // NOTE : Prepared statements should be finished
+        //
         // createHolderStmt = connection.prepareStatement("INSERT INTO " +
         // LESSEE_TABLE_NAME
         // + "(" + LESSEE_COLUMN_NAME + ") VALUES (?)");
