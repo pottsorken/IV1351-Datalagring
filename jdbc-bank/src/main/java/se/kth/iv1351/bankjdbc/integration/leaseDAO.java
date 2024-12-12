@@ -31,8 +31,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.kth.iv1351.bankjdbc.model.Account;
-import se.kth.iv1351.bankjdbc.model.AccountDTO;
+import se.kth.iv1351.bankjdbc.model.Lease;
+import se.kth.iv1351.bankjdbc.model.LeaseDTO;
 
 /**
  * This data access object (DAO) encapsulates all database calls in the bank
@@ -102,29 +102,29 @@ public class leaseDAO {
     }
 
     /**
-     * Creates a new account.
+     * Creates a new lease.
      *
-     * @param account The account to create.
+     * @param account The lease to create.
      * @throws BankDBException If failed to create the specified account.
      */
-    public void createAccount(AccountDTO account) throws BankDBException {
-        String failureMsg = "Could not create the account: " + account;
+    public void createLease(LeaseDTO lease) throws BankDBException {
+        String failureMsg = "Could not create the account: " + lease;
         int updatedRows = 0;
         try {
-            int holderPK = findHolderPKByName(account.getHolderName());
-            if (holderPK == 0) {
-                createHolderStmt.setString(1, account.getHolderName());
-                updatedRows = createHolderStmt.executeUpdate();
-                if (updatedRows != 1) {
-                    handleException(failureMsg, null);
-                }
-                holderPK = findHolderPKByName(account.getHolderName());
+            int lesseePK = lease.getLessee();
+            if (lesseePK == 0) {
+                handleException(failureMsg, null);
+                // createHolderStmt.setString(1, account.getHolderName());
+                // updatedRows = createHolderStmt.executeUpdate();
+                // if (updatedRows != 1) {
+                // handleException(failureMsg, null);
+                // }
+                // holderPK = findHolderPKByName(account.getHolderName());
             }
 
-            createAccountStmt.setInt(1, createAccountNo());
-            createAccountStmt.setInt(2, account.getBalance());
-            createAccountStmt.setInt(3, holderPK);
-            updatedRows = createAccountStmt.executeUpdate();
+            createLeaseStmt.setInt(1, lease.getInstrument());
+            createLeaseStmt.setInt(2, lease.getLessee());
+            updatedRows = createLeaseStmt.executeUpdate();
             if (updatedRows != 1) {
                 handleException(failureMsg, null);
             }
@@ -135,49 +135,49 @@ public class leaseDAO {
         }
     }
 
-    /**
-     * Searches for the account with the specified account number.
-     *
-     * @param acctNo        The account number.
-     * @param lockExclusive If true, it will not be possible to perform UPDATE
-     *                      or DELETE statements on the selected row in the
-     *                      current transaction. Also, the transaction will not
-     *                      be committed when this method returns. If false, no
-     *                      exclusive locks will be created, and the transaction
-     *                      will be committed when this method returns.
-     * @return The account with the specified account number, or <code>null</code>
-     *         if there is no such account.
-     * @throws BankDBException If failed to search for the account.
-     */
-    public Account findAccountByAcctNo(String acctNo, boolean lockExclusive)
-            throws BankDBException {
-        PreparedStatement stmtToExecute;
-        if (lockExclusive) {
-            stmtToExecute = findAccountByAcctNoStmtLockingForUpdate;
-        } else {
-            stmtToExecute = findAccountByAcctNoStmt;
-        }
-
-        String failureMsg = "Could not search for specified account.";
-        ResultSet result = null;
-        try {
-            stmtToExecute.setString(1, acctNo);
-            result = stmtToExecute.executeQuery();
-            if (result.next()) {
-                return new Account(result.getString(LEASE_ID_COLUMN_NAME),
-                        result.getString(LESSEE_NAME_COLUMN_NAME),
-                        result.getInt(BALANCE_COLUMN_NAME));
-            }
-            if (!lockExclusive) {
-                connection.commit();
-            }
-        } catch (SQLException sqle) {
-            handleException(failureMsg, sqle);
-        } finally {
-            closeResultSet(failureMsg, result);
-        }
-        return null;
-    }
+    /// **
+    // * Searches for the account with the specified account number.
+    // *
+    // * @param acctNo The account number.
+    // * @param lockExclusive If true, it will not be possible to perform UPDATE
+    // * or DELETE statements on the selected row in the
+    // * current transaction. Also, the transaction will not
+    // * be committed when this method returns. If false, no
+    // * exclusive locks will be created, and the transaction
+    // * will be committed when this method returns.
+    // * @return The account with the specified account number, or <code>null</code>
+    // * if there is no such account.
+    // * @throws BankDBException If failed to search for the account.
+    // */
+    // public Account findAccountByAcctNo(String acctNo, boolean lockExclusive)
+    // throws BankDBException {
+    // PreparedStatement stmtToExecute;
+    // if (lockExclusive) {
+    // stmtToExecute = findAccountByAcctNoStmtLockingForUpdate;
+    // } else {
+    // stmtToExecute = findAccountByAcctNoStmt;
+    // }
+    //
+    // String failureMsg = "Could not search for specified account.";
+    // ResultSet result = null;
+    // try {
+    // stmtToExecute.setString(1, acctNo);
+    // result = stmtToExecute.executeQuery();
+    // if (result.next()) {
+    // return new Account(result.getString(LEASE_ID_COLUMN_NAME),
+    // result.getString(LESSEE_NAME_COLUMN_NAME),
+    // result.getInt(BALANCE_COLUMN_NAME));
+    // }
+    // if (!lockExclusive) {
+    // connection.commit();
+    // }
+    // } catch (SQLException sqle) {
+    // handleException(failureMsg, sqle);
+    // } finally {
+    // closeResultSet(failureMsg, result);
+    // }
+    // return null;
+    // }
 
     /**
      * Searches for all accounts whose holder has the specified name.
@@ -187,17 +187,16 @@ public class leaseDAO {
      *         the list is empty if there are no such account.
      * @throws BankDBException If failed to search for accounts.
      */
-    public List<Account> findAccountsByHolder(String holderName) throws BankDBException {
-        String failureMsg = "Could not search for specified accounts.";
+    public List<Lease> findLeasesByLessee(int lesseeNo) throws BankDBException {
+        String failureMsg = "Could not search for specified leases.";
         ResultSet result = null;
-        List<Account> accounts = new ArrayList<>();
+        List<Lease> leases = new ArrayList<>();
         try {
-            findAccountByNameStmt.setString(1, holderName);
-            result = findAccountByNameStmt.executeQuery();
+            findLeasesByStudentStmt.setInt(1, lesseeNo);
+            result = findLeasesByStudentStmt.executeQuery();
             while (result.next()) {
-                accounts.add(new Account(result.getString(LEASE_ID_COLUMN_NAME),
-                        result.getString(LESSEE_NAME_COLUMN_NAME),
-                        result.getInt(BALANCE_COLUMN_NAME)));
+                leases.add(new Lease(result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
+                        result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME)));
             }
             connection.commit();
         } catch (SQLException sqle) {
@@ -205,66 +204,119 @@ public class leaseDAO {
         } finally {
             closeResultSet(failureMsg, result);
         }
-        return accounts;
+        return leases;
     }
 
     /**
-     * Retrieves all existing accounts.
+     * Retrieves all existing leases.
      *
-     * @return A list with all existing accounts. The list is empty if there are no
+     * @return A list with all existing leases. The list is empty if there are no
      *         accounts.
-     * @throws BankDBException If failed to search for accounts.
+     * @throws BankDBException If failed to search for leases.
      */
-    public List<Account> findAllAccounts() throws BankDBException {
-        String failureMsg = "Could not list accounts.";
-        List<Account> accounts = new ArrayList<>();
-        try (ResultSet result = findAllAccountsStmt.executeQuery()) {
+    public List<Lease> findAllLeases() throws BankDBException {
+        String failureMsg = "Could not list leases.";
+        List<Lease> leases = new ArrayList<>();
+        try (ResultSet result = findAllLeasesStmt.executeQuery()) {
             while (result.next()) {
-                accounts.add(new Account(result.getString(LEASE_ID_COLUMN_NAME),
-                        result.getString(LESSEE_NAME_COLUMN_NAME),
-                        result.getInt(BALANCE_COLUMN_NAME)));
+                // lessee no, instrument no
+                leases.add(new Lease(result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
+                        result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME)));
             }
             connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         }
-        return accounts;
+        return leases;
     }
 
-    /**
-     * Changes the balance of the account with the number of the specified
-     * <code>AccountDTO</code> object. The balance is set to the value in the
-     * specified <code>AccountDTO</code>.
-     *
-     * @param account The account to update.
-     * @throws BankDBException If unable to update the specified account.
-     */
-    public void updateAccount(AccountDTO account) throws BankDBException {
-        String failureMsg = "Could not update the account: " + account;
-        try {
-            changeBalanceStmt.setInt(1, account.getBalance());
-            changeBalanceStmt.setString(2, account.getAccountNo());
-            int updatedRows = changeBalanceStmt.executeUpdate();
-            if (updatedRows != 1) {
-                handleException(failureMsg, null);
-            }
-            connection.commit();
-        } catch (SQLException sqle) {
-            handleException(failureMsg, sqle);
-        }
-    }
+    /// **
+    // * Searches for all accounts whose holder has the specified name.
+    // *
+    // * @param holderName The account holder's name
+    // * @return A list with all accounts whose holder has the specified name,
+    // * the list is empty if there are no such account.
+    // * @throws BankDBException If failed to search for accounts.
+    // */
+    // public List<Lease> findLeasesByLessee(int lesseeNo) throws BankDBException {
+    // String failureMsg = "Could not search for specified leases.";
+    // ResultSet result = null;
+    // List<Lease> leases = new ArrayList<>();
+    // try {
+    // findLeasesByStudentStmt.setInt(1, lesseeNo);
+    // result = findLeasesByStudentStmt.executeQuery();
+    // while (result.next()) {
+    // leases.add(new Lease(result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
+    // result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME)));
+    // }
+    // connection.commit();
+    // } catch (SQLException sqle) {
+    // handleException(failureMsg, sqle);
+    // } finally {
+    // closeResultSet(failureMsg, result);
+    // }
+    // return leases;
+    // }
+    //
+    /// **
+    // * Retrieves all existing leases.
+    // *
+    // * @return A list with all existing leases. The list is empty if there are no
+    // * accounts.
+    // * @throws BankDBException If failed to search for leases.
+    // */
+    // public List<Lease> findAllLessees() throws BankDBException {
+    // String failureMsg = "Could not list lessees.";
+    // List<Lease> leases = new ArrayList<>();
+    // try (ResultSet result = findAllLeasesStmt.executeQuery()) {
+    // while (result.next()) {
+    // // lessee no, instrument no
+    // leases.add(new Lease(result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
+    // result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME)));
+    // }
+    // connection.commit();
+    // } catch (SQLException sqle) {
+    // handleException(failureMsg, sqle);
+    // }
+    // return leases;
+    // }
+
+    /// **
+    // * Changes the balance of the account with the number of the specified
+    // * <code>AccountDTO</code> object. The balance is set to the value in the
+    // * specified <code>AccountDTO</code>.
+    // *
+    // * @param account The account to update.
+    // * @throws BankDBException If unable to update the specified account.
+    // */
+    // public void updateAccount(AccountDTO account) throws BankDBException {
+    // String failureMsg = "Could not update the account: " + account;
+    // try {
+    // changeBalanceStmt.setInt(1, account.getBalance());
+    // changeBalanceStmt.setString(2, account.getAccountNo());
+    // int updatedRows = changeBalanceStmt.executeUpdate();
+    // if (updatedRows != 1) {
+    // handleException(failureMsg, null);
+    // }
+    // connection.commit();
+    // } catch (SQLException sqle) {
+    // handleException(failureMsg, sqle);
+    // }
+    // }
 
     /**
-     * Deletes the account with the specified account number.
+     * Changes the lease with the specified lease number.
      *
-     * @param acctNo The account to delete.
+     * @param leaseNo The lease to change.
+     * @param active  The state to change lease to.
      * @throws BankDBException If unable to delete the specified account.
      */
-    public void deleteAccount(String acctNo) throws BankDBException {
-        String failureMsg = "Could not delete account: " + acctNo;
+    public void changeLease(int leaseNo, boolean active) throws BankDBException {
+        String failureMsg = "Could not change lease: " + leaseNo;
         try {
-            deleteAccountStmt.setString(1, acctNo);
-            int updatedRows = deleteAccountStmt.executeUpdate();
+            changeLeaseStmt.setBoolean(1, active);
+            changeLeaseStmt.setInt(2, leaseNo);
+            int updatedRows = changeLeaseStmt.executeUpdate();
             if (updatedRows != 1) {
                 handleException(failureMsg, null);
             }
@@ -423,12 +475,12 @@ public class leaseDAO {
         return (int) Math.floor(Math.random() * Integer.MAX_VALUE);
     }
 
-    private int findHolderPKByName(String holderName) throws SQLException {
+    private int findQuotaByPK(int lesseeNo) throws SQLException {
         ResultSet result = null;
-        findHolderPKStmt.setString(1, holderName);
-        result = findHolderPKStmt.executeQuery();
+        findQuotaByStudentStmt.setInt(1, lesseeNo);
+        result = findQuotaByStudentStmt.executeQuery();
         if (result.next()) {
-            return result.getInt(LESSEE_PK_COLUMN_NAME);
+            return result.getInt(LESSEE_QUOTA_COLUMN_NAME);
         }
         return 0;
     }
