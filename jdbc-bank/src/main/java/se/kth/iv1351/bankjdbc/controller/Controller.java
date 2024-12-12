@@ -26,10 +26,12 @@ package se.kth.iv1351.bankjdbc.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.kth.iv1351.bankjdbc.integration.BankDAO;
+import se.kth.iv1351.bankjdbc.integration.LeaseDAO;
 import se.kth.iv1351.bankjdbc.integration.BankDBException;
-import se.kth.iv1351.bankjdbc.model.Account;
-import se.kth.iv1351.bankjdbc.model.AccountDTO;
+import se.kth.iv1351.bankjdbc.model.Lease;
+import se.kth.iv1351.bankjdbc.model.LeaseDTO;
+import se.kth.iv1351.bankjdbc.model.Instrument;
+import se.kth.iv1351.bankjdbc.model.InstrumentDTO;
 import se.kth.iv1351.bankjdbc.model.AccountException;
 import se.kth.iv1351.bankjdbc.model.RejectedException;
 
@@ -40,7 +42,7 @@ import se.kth.iv1351.bankjdbc.model.RejectedException;
  * the data, and finally tells the DAO to store the updated data (if any).
  */
 public class Controller {
-    private final BankDAO bankDb;
+    private final LeaseDAO rentDb;
 
     /**
      * Creates a new instance, and retrieves a connection to the database.
@@ -48,24 +50,30 @@ public class Controller {
      * @throws BankDBException If unable to connect to the database.
      */
     public Controller() throws BankDBException {
-        bankDb = new BankDAO();
+        rentDb = new LeaseDAO();
     }
 
     /**
-     * Creates a new account for the specified account holder.
+     * Creates a new lease for the specified student and instrument.
      * 
      * @param holderName The account holder's name.
      * @throws AccountException If unable to create account.
      */
-    public void createAccount(String holderName) throws AccountException {
-        String failureMsg = "Could not create account for: " + holderName;
+    public void createLease(int lesseeNo, int instrumentNo) throws AccountException {
+        String failureMsg = "Could not create lease for: " + lesseeNo;
 
-        if (holderName == null) {
+        if (lesseeNo == 0) {
             throw new AccountException(failureMsg);
         }
 
         try {
-            bankDb.createAccount(new Account(holderName));
+            int quota = rentDb.findQuotaByPK(lesseeNo);
+
+            if (quota <= 0) {
+                throw new AccountException(failureMsg);
+            } else {
+                rentDb.createLease(new Lease(lesseeNo, instrumentNo));
+            }
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);
         }
@@ -78,11 +86,11 @@ public class Controller {
      *         accounts.
      * @throws AccountException If unable to retrieve accounts.
      */
-    public List<? extends AccountDTO> getAllAccounts() throws AccountException {
+    public List<? extends LeaseDTO> getAllLeases() throws AccountException {
         try {
-            return bankDb.findAllAccounts();
+            return rentDb.findAllLeases();
         } catch (Exception e) {
-            throw new AccountException("Unable to list accounts.", e);
+            throw new AccountException("Unable to list leases.", e);
         }
     }
 
@@ -95,97 +103,135 @@ public class Controller {
      *         such holder.
      * @throws AccountException If unable to retrieve the holder's accounts.
      */
-    public List<? extends AccountDTO> getAccountsForHolder(String holderName) throws AccountException {
-        if (holderName == null) {
+    public List<? extends LeaseDTO> getLeasesForStudent(int lesseeNo) throws AccountException {
+        if (lesseeNo == 0) {
             return new ArrayList<>();
         }
 
         try {
-            return bankDb.findAccountsByHolder(holderName);
+            return rentDb.findLeasesByLessee(lesseeNo);
         } catch (Exception e) {
-            throw new AccountException("Could not search for account.", e);
+            throw new AccountException("Could not search for lease.", e);
         }
     }
 
     /**
-     * Retrieves the account with the specified number.
+     * Lists all accounts in the whole bank.
      * 
-     * @param acctNo The number of the searched account.
-     * @return The account with the specified account number, or <code>null</code>
-     *         if there is no such account.
-     * @throws AccountException If unable to retrieve the account.
+     * @return A list containing all accounts. The list is empty if there are no
+     *         accounts.
+     * @throws AccountException If unable to retrieve accounts.
      */
-    public AccountDTO getAccount(String acctNo) throws AccountException {
-        if (acctNo == null) {
-            return null;
-        }
-
+    public List<? extends InstrumentDTO> getAllInstruments() throws AccountException {
         try {
-            return bankDb.findAccountByAcctNo(acctNo, false);
+            return rentDb.findAllInstruments();
         } catch (Exception e) {
-            throw new AccountException("Could not search for account.", e);
+            throw new AccountException("Unable to list instruments.", e);
         }
     }
 
     /**
-     * Deposits the specified amount to the account with the specified account
-     * number.
+     * Lists all accounts owned by the specified account holder.
      * 
-     * @param acctNo The number of the account to which to deposit.
-     * @param amt    The amount to deposit.
-     * @throws RejectedException If not allowed to deposit the specified amount.
-     * @throws AccountException  If failed to deposit.
+     * @param holderName The holder who's accounts shall be listed.
+     * @return A list with all accounts owned by the specified holder. The list is
+     *         empty if the holder does not have any accounts, or if there is no
+     *         such holder.
+     * @throws AccountException If unable to retrieve the holder's accounts.
      */
-    public void deposit(String acctNo, int amt) throws RejectedException, AccountException {
-        String failureMsg = "Could not deposit to account: " + acctNo;
-
-        if (acctNo == null) {
-            throw new AccountException(failureMsg);
+    public List<? extends InstrumentDTO> getInstrumentsByType(int typeNo) throws AccountException {
+        if (typeNo <= 0) {
+            return new ArrayList<>();
         }
 
         try {
-            Account acct = bankDb.findAccountByAcctNo(acctNo, true);
-            acct.deposit(amt);
-            bankDb.updateAccount(acct);
-        } catch (BankDBException bdbe) {
-            throw new AccountException(failureMsg, bdbe);
+            return rentDb.findInstrumentsByType(typeNo);
         } catch (Exception e) {
-            commitOngoingTransaction(failureMsg);
-            throw e;
+            throw new AccountException("Could not search for instruments.", e);
         }
     }
 
-    /**
-     * Withdraws the specified amount from the account with the specified account
-     * number.
-     * 
-     * @param acctNo The number of the account from which to withdraw.
-     * @param amt    The amount to withdraw.
-     * @throws RejectedException If not allowed to withdraw the specified amount.
-     * @throws AccountException  If failed to withdraw.
-     */
-    public void withdraw(String acctNo, int amt) throws RejectedException, AccountException {
-        String failureMsg = "Could not withdraw from account: " + acctNo;
+    /// **
+    // * Retrieves the account with the specified number.
+    // *
+    // * @param acctNo The number of the searched account.
+    // * @return The account with the specified account number, or <code>null</code>
+    // * if there is no such account.
+    // * @throws AccountException If unable to retrieve the account.
+    // */
+    // public AccountDTO getAccount(String acctNo) throws AccountException {
+    // if (acctNo == null) {
+    // return null;
+    // }
+    //
+    // try {
+    // return rentDb.findAccountByAcctNo(acctNo, false);
+    // } catch (Exception e) {
+    // throw new AccountException("Could not search for account.", e);
+    // }
+    // }
 
-        if (acctNo == null) {
-            throw new AccountException(failureMsg);
-        }
+    /// **
+    // * Deposits the specified amount to the account with the specified account
+    // * number.
+    // *
+    // * @param acctNo The number of the account to which to deposit.
+    // * @param amt The amount to deposit.
+    // * @throws RejectedException If not allowed to deposit the specified amount.
+    // * @throws AccountException If failed to deposit.
+    // */
+    // public void deposit(String acctNo, int amt) throws RejectedException,
+    /// AccountException {
+    // String failureMsg = "Could not deposit to account: " + acctNo;
+    //
+    // if (acctNo == null) {
+    // throw new AccountException(failureMsg);
+    // }
+    //
+    // try {
+    // Account acct = rentDb.findAccountByAcctNo(acctNo, true);
+    // acct.deposit(amt);
+    // rentDb.updateAccount(acct);
+    // } catch (BankDBException bdbe) {
+    // throw new AccountException(failureMsg, bdbe);
+    // } catch (Exception e) {
+    // commitOngoingTransaction(failureMsg);
+    // throw e;
+    // }
+    // }
 
-        try {
-            Account acct = bankDb.findAccountByAcctNo(acctNo, true);
-            acct.withdraw(amt);
-            bankDb.updateAccount(acct);
-        } catch (BankDBException bdbe) {
-            throw new AccountException(failureMsg, bdbe);
-        } catch (Exception e) {
-            commitOngoingTransaction(failureMsg);
-            throw e;
-        }
-    }
+    /// **
+    // * Withdraws the specified amount from the account with the specified account
+    // * number.
+    // *
+    // * @param acctNo The number of the account from which to withdraw.
+    // * @param amt The amount to withdraw.
+    // * @throws RejectedException If not allowed to withdraw the specified amount.
+    // * @throws AccountException If failed to withdraw.
+    // */
+    // public void withdraw(String acctNo, int amt) throws RejectedException,
+    /// AccountException {
+    // String failureMsg = "Could not withdraw from account: " + acctNo;
+    //
+    // if (acctNo == null) {
+    // throw new AccountException(failureMsg);
+    // }
+    //
+    // try {
+    // Account acct = rentDb.findAccountByAcctNo(acctNo, true);
+    // acct.withdraw(amt);
+    // rentDb.updateAccount(acct);
+    // } catch (BankDBException bdbe) {
+    // throw new AccountException(failureMsg, bdbe);
+    // } catch (Exception e) {
+    // commitOngoingTransaction(failureMsg);
+    // throw e;
+    // }
+    // }
 
     private void commitOngoingTransaction(String failureMsg) throws AccountException {
         try {
-            bankDb.commit();
+            rentDb.commit();
         } catch (BankDBException bdbe) {
             throw new AccountException(failureMsg, bdbe);
         }
@@ -197,15 +243,15 @@ public class Controller {
      * @param acctNo The number of the account that shall be deleted.
      * @throws AccountException If failed to delete the specified account.
      */
-    public void deleteAccount(String acctNo) throws AccountException {
-        String failureMsg = "Could not delete account: " + acctNo;
+    public void terminateLease(int leaseNo) throws AccountException {
+        String failureMsg = "Could not terminate lease: " + leaseNo;
 
-        if (acctNo == null) {
+        if (leaseNo <= 0) {
             throw new AccountException(failureMsg);
         }
 
         try {
-            bankDb.deleteAccount(acctNo);
+            rentDb.changeLease(leaseNo, false);
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);
         }

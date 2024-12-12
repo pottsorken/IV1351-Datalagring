@@ -32,7 +32,8 @@ public class Account implements AccountDTO {
     private String acctNo;
 
     /**
-     * Creates an account for the specified holder with the balance zero. The account
+     * Creates an account for the specified holder with the balance zero. The
+     * account
      * number is unspecified.
      *
      * @param holderName The account holder's holderName.
@@ -54,7 +55,8 @@ public class Account implements AccountDTO {
     }
 
     /**
-     * Creates an account for the specified holder with the specified balance and account
+     * Creates an account for the specified holder with the specified balance and
+     * account
      * number.
      *
      * @param acctNo     The account number.
@@ -98,8 +100,8 @@ public class Account implements AccountDTO {
     public void deposit(int amount) throws RejectedException {
         if (amount < 0) {
             throw new RejectedException("Tried to deposit negative value, illegal value: "
-                                        + amount + ", account: " + this);
-    }
+                    + amount + ", account: " + this);
+        }
         balance = balance + amount;
     }
 
@@ -114,11 +116,11 @@ public class Account implements AccountDTO {
     public void withdraw(int amount) throws RejectedException {
         if (amount < 0) {
             throw new RejectedException("Tried to withdraw negative value, illegal value: "
-                                        + amount + ", account: " + this);
+                    + amount + ", account: " + this);
         }
         if (balance - amount < 0) {
             throw new RejectedException("Overdraft attempt, illegal value: " + amount
-                                        + ", account: " + this);
+                    + ", account: " + this);
         }
         balance = balance - amount;
     }

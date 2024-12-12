@@ -34,12 +34,15 @@ import java.util.List;
 import se.kth.iv1351.bankjdbc.model.Lease;
 import se.kth.iv1351.bankjdbc.model.LeaseDTO;
 
+import se.kth.iv1351.bankjdbc.model.Instrument;
+import se.kth.iv1351.bankjdbc.model.InstrumentDTO;
+
 /**
  * This data access object (DAO) encapsulates all database calls in the bank
  * application. No code outside this class shall have any knowledge about the
  * database.
  */
-public class leaseDAO {
+public class LeaseDAO {
     private static final String LESSEE_TABLE_NAME = "student";
     private static final String LESSEE_PK_COLUMN_NAME = "student_id";
     private static final String LESSEE_NAME_COLUMN_NAME = "name";
@@ -92,7 +95,7 @@ public class leaseDAO {
     /**
      * Constructs a new DAO object connected to the bank database.
      */
-    public leaseDAO() throws BankDBException {
+    public LeaseDAO() throws BankDBException {
         try {
             connectToBankDB();
             prepareStatements();
@@ -107,8 +110,8 @@ public class leaseDAO {
      * @param account The lease to create.
      * @throws BankDBException If failed to create the specified account.
      */
-    public void createLease(LeaseDTO lease) throws BankDBException {
-        String failureMsg = "Could not create the account: " + lease;
+    public void createLease(LeaseDTO lease) throws BankDBException { // NOTE: LeaseDTO may be Lease
+        String failureMsg = "Could not create the lease: " + lease;
         int updatedRows = 0;
         try {
             int lesseePK = lease.getLessee();
@@ -327,6 +330,59 @@ public class leaseDAO {
     }
 
     /**
+     * Retrieves all existing instruments.
+     *
+     * @return A list with all existing instruments. The list is empty if there are
+     *         no
+     *         instruments.
+     * @throws BankDBException If failed to search for instruments.
+     */
+    public List<Instrument> findAllInstruments() throws BankDBException {
+        String failureMsg = "Could not list instruments.";
+        List<Instrument> instruments = new ArrayList<>();
+        try (ResultSet result = findAllInstrumentsStmt.executeQuery()) {
+            while (result.next()) {
+                instruments.add(new Instrument(result.getInt(INSTRUMENT_PK_COLUMN_NAME),
+                        result.getString(LOOKUP_INSTRUMENT_COLUMN_NAME), result.getString(INSTRUMENT_BRAND_COLUMN_NAME),
+                        result.getInt(INSTRUMENT_PRICE_COLUMN_NAME)));
+            }
+            connection.commit();
+        } catch (SQLException sqle) {
+            handleException(failureMsg, sqle);
+        }
+        return instruments;
+    }
+
+    /**
+     * Searches for all instruments whose type has the specified type id.
+     *
+     * @param typeNo The instruments's type number
+     * @return A list with all instruments whose type has the specified id,
+     *         the list is empty if there are no such account.
+     * @throws BankDBException If failed to search for instruments.
+     */
+    public List<Instrument> findInstrumentsByType(int typeNo) throws BankDBException {
+        String failureMsg = "Could not search for specified instruments.";
+        ResultSet result = null;
+        List<Instrument> instruments = new ArrayList<>();
+        try {
+            findInstrumentsByTypeStmt.setInt(1, typeNo);
+            result = findInstrumentsByTypeStmt.executeQuery();
+            while (result.next()) {
+                instruments.add(new Instrument(result.getInt(INSTRUMENT_PK_COLUMN_NAME),
+                        result.getString(LOOKUP_INSTRUMENT_COLUMN_NAME), result.getString(INSTRUMENT_BRAND_COLUMN_NAME),
+                        result.getInt(INSTRUMENT_PRICE_COLUMN_NAME)));
+            }
+            connection.commit();
+        } catch (SQLException sqle) {
+            handleException(failureMsg, sqle);
+        } finally {
+            closeResultSet(failureMsg, result);
+        }
+        return instruments;
+    }
+
+    /**
      * Commits the current transaction.
      * 
      * @throws BankDBException If unable to commit the current transaction.
@@ -471,11 +527,11 @@ public class leaseDAO {
         }
     }
 
-    private int createAccountNo() {
-        return (int) Math.floor(Math.random() * Integer.MAX_VALUE);
-    }
+    // private int createAccountNo() {
+    // return (int) Math.floor(Math.random() * Integer.MAX_VALUE);
+    // }
 
-    private int findQuotaByPK(int lesseeNo) throws SQLException {
+    public int findQuotaByPK(int lesseeNo) throws SQLException {
         ResultSet result = null;
         findQuotaByStudentStmt.setInt(1, lesseeNo);
         result = findQuotaByStudentStmt.executeQuery();
