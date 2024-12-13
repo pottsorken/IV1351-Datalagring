@@ -28,10 +28,12 @@ import java.util.List;
 import java.util.Scanner;
 
 import se.kth.iv1351.bankjdbc.controller.Controller;
-import se.kth.iv1351.bankjdbc.model.AccountDTO;
+import se.kth.iv1351.bankjdbc.model.LeaseDTO;
+import se.kth.iv1351.bankjdbc.model.InstrumentDTO;
 
 /**
- * Reads and interprets user commands. This command interpreter is blocking, the user
+ * Reads and interprets user commands. This command interpreter is blocking, the
+ * user
  * interface does not react to user input while a command is being executed.
  */
 public class BlockingInterpreter {
@@ -41,7 +43,8 @@ public class BlockingInterpreter {
     private boolean keepReceivingCmds = false;
 
     /**
-     * Creates a new instance that will use the specified controller for all operations.
+     * Creates a new instance that will use the specified controller for all
+     * operations.
      * 
      * @param ctrl The controller used by this instance.
      */
@@ -78,41 +81,62 @@ public class BlockingInterpreter {
                     case QUIT:
                         keepReceivingCmds = false;
                         break;
-                    case NEW:
-                        ctrl.createAccount(cmdLine.getParameter(0));
+                    case RENT:
+                        Integer arg1 = Integer.valueOf(cmdLine.getParameter(0));
+                        Integer arg2 = Integer.valueOf(cmdLine.getParameter(1));
+                        ctrl.createLease(arg1, arg2);
                         break;
-                    case DELETE:
-                        ctrl.deleteAccount(cmdLine.getParameter(0));
+                    case TERMINATE:
+                        Integer arg = Integer.valueOf(cmdLine.getParameter(0));
+                        ctrl.terminateLease(arg);
                         break;
-                    case LIST:
-                        List<? extends AccountDTO> accounts = null;
+                    case LISTINSTR:
+                        List<? extends InstrumentDTO> instruments = null;
                         if (cmdLine.getParameter(0).equals("")) {
-                            accounts = ctrl.getAllAccounts();
+                            instruments = ctrl.getAllInstruments();
                         } else {
-                            accounts = ctrl.getAccountsForHolder(cmdLine.getParameter(0));
+                            System.out.println(" hey" + cmdLine.getParameter(0).toString());
+                            instruments = ctrl.getInstrumentsByType(cmdLine.getParameter(0).toString());
                         }
-                        for (AccountDTO account : accounts) {
-                            System.out.println("acct no: " + account.getAccountNo() + ", "
-                                             + "holder: " + account.getHolderName() + ", "
-                                             + "balance: " + account.getBalance());
+                        for (InstrumentDTO instrument : instruments) {
+                            System.out.println("instrument no: " + instrument.getInstrumentNo() + ", "
+                                    + "type: " + instrument.getType() + ", "
+                                    + "brand: " + instrument.getBrand() + ", "
+                                    + "lease price: " + instrument.getPrice());
                         }
                         break;
-                    case DEPOSIT:
-                        ctrl.deposit(cmdLine.getParameter(0), 
-                                     Integer.parseInt(cmdLine.getParameter(1)));
-                        break;
-                    case WITHDRAW:
-                        ctrl.withdraw(cmdLine.getParameter(0), 
-                                      Integer.parseInt(cmdLine.getParameter(1)));
-                        break;
-                    case BALANCE:
-                        AccountDTO acct = ctrl.getAccount(cmdLine.getParameter(0));
-                        if (acct != null) {
-                            System.out.println(acct.getBalance());
+                    case LISTLEASE:
+                        List<? extends LeaseDTO> leases = null;
+                        if (cmdLine.getParameter(0).equals("")) {
+                            leases = ctrl.getAllLeases();
                         } else {
-                            System.out.println("No such account");
+                            Integer arg4 = Integer.valueOf(cmdLine.getParameter(0));
+                            leases = ctrl.getLeasesForStudent(arg4);
+                        }
+                        for (LeaseDTO lease : leases) {
+                            System.out.println("lease no: " + lease.getLeaseNo() + ", "
+                                    + "instrument no: " + lease.getInstrument() + ", "
+                                    + "lessee: " + lease.getLessee() + ", "
+                                    + "is active: " + lease.getLeaseState());
                         }
                         break;
+
+                    // case DEPOSIT:
+                    // ctrl.deposit(cmdLine.getParameter(0),
+                    // Integer.parseInt(cmdLine.getParameter(1)));
+                    // break;
+                    // case WITHDRAW:
+                    // ctrl.withdraw(cmdLine.getParameter(0),
+                    // Integer.parseInt(cmdLine.getParameter(1)));
+                    // break;
+                    // case BALANCE:
+                    // AccountDTO acct = ctrl.getAccount(cmdLine.getParameter(0));
+                    // if (acct != null) {
+                    // System.out.println(acct.getBalance());
+                    // } else {
+                    // System.out.println("No such account");
+                    // }
+                    // break;
                     default:
                         System.out.println("illegal command");
                 }

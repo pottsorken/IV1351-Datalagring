@@ -21,6 +21,13 @@ public class Lease implements LeaseDTO {
         this.active = true;
     }
 
+    public Lease(int leaseNo, int lesseeNo, int instrumentNo, boolean active) {
+        this.leaseNo = leaseNo;
+        this.lesseeNo = lesseeNo;
+        this.instrumentNo = instrumentNo;
+        this.active = active;
+    }
+
     public int getLeaseNo() {
         return leaseNo;
     }

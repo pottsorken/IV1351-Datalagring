@@ -69,9 +69,13 @@ public class Controller {
         try {
             int quota = rentDb.findQuotaByPK(lesseeNo);
 
+            System.out.println(quota);
+            // TODO: Add check that specified instrument is free
+            // TODO: Decrement quota value (change quota prepare stmt)
             if (quota <= 0) {
                 throw new AccountException(failureMsg);
             } else {
+                rentDb.changeInstrument(instrumentNo, true);
                 rentDb.createLease(new Lease(lesseeNo, instrumentNo));
             }
         } catch (Exception e) {
@@ -139,13 +143,13 @@ public class Controller {
      *         such holder.
      * @throws AccountException If unable to retrieve the holder's accounts.
      */
-    public List<? extends InstrumentDTO> getInstrumentsByType(int typeNo) throws AccountException {
-        if (typeNo <= 0) {
+    public List<? extends InstrumentDTO> getInstrumentsByType(String typeName) throws AccountException {
+        if (typeName == null) {
             return new ArrayList<>();
         }
 
         try {
-            return rentDb.findInstrumentsByType(typeNo);
+            return rentDb.findInstrumentsByType(typeName);
         } catch (Exception e) {
             throw new AccountException("Could not search for instruments.", e);
         }
@@ -249,8 +253,9 @@ public class Controller {
         if (leaseNo <= 0) {
             throw new AccountException(failureMsg);
         }
-
+        // TODO: get instrumntNoByLease
         try {
+            // rentDb.changeInstrument(instrumentNo, false);
             rentDb.changeLease(leaseNo, false);
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);

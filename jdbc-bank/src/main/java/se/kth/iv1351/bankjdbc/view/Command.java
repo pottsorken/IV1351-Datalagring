@@ -29,29 +29,21 @@ package se.kth.iv1351.bankjdbc.view;
  */
 public enum Command {
     /**
-     * Creates a new account.
+     * Lists all free instruments.
      */
-    NEW,
+    LISTINSTR,
     /**
-     * Lists all existing accounts.
+     * Lists all existing leases.
      */
-    LIST,
+    LISTLEASE,
     /**
-     * Deletes the specified account.
+     * Terminates the specified lease.
      */
-    DELETE,
+    TERMINATE,
     /**
-     * Deposits the specified amount to the specified account
+     * Open a new lease for the specified person and instrument
      */
-    DEPOSIT,
-    /**
-     * Withdraws the specified amount from the specified account
-     */
-    WITHDRAW,
-    /**
-     * Lists the balance of the specified account.
-     */
-    BALANCE,
+    RENT,
     /**
      * Lists all commands.
      */

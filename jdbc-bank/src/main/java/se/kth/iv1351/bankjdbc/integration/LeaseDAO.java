@@ -81,6 +81,7 @@ public class LeaseDAO {
     private PreparedStatement changeLeaseStmt;
     private PreparedStatement findAllLeasesStmt;
     private PreparedStatement findLeasesByStudentStmt;
+    private PreparedStatement changeInstrumentStmt;
 
     // private PreparedStatement createHolderStmt;
     // private PreparedStatement findHolderPKStmt;
@@ -198,8 +199,8 @@ public class LeaseDAO {
             findLeasesByStudentStmt.setInt(1, lesseeNo);
             result = findLeasesByStudentStmt.executeQuery();
             while (result.next()) {
-                leases.add(new Lease(result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
-                        result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME)));
+                leases.add(new Lease(result.getInt(LEASE_PK_COLUMN_NAME), result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
+                        result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME), result.getBoolean(LEASE_ONGOING_COLUMN_NAME)));
             }
             connection.commit();
         } catch (SQLException sqle) {
@@ -223,8 +224,8 @@ public class LeaseDAO {
         try (ResultSet result = findAllLeasesStmt.executeQuery()) {
             while (result.next()) {
                 // lessee no, instrument no
-                leases.add(new Lease(result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
-                        result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME)));
+                leases.add(new Lease(result.getInt(LEASE_PK_COLUMN_NAME), result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
+                        result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME), result.getBoolean(LEASE_ONGOING_COLUMN_NAME)));
             }
             connection.commit();
         } catch (SQLException sqle) {
@@ -330,6 +331,28 @@ public class LeaseDAO {
     }
 
     /**
+     * Changes the instrument with the specified lease number.
+     *
+     * @param instrumentNo The instrument to change.
+     * @param onLease      The state to change instrument to.
+     * @throws BankDBException If unable to change the specified account.
+     */
+    public void changeInstrument(int instrumentNo, boolean onLease) throws BankDBException {
+        String failureMsg = "Could not change instrument: " + instrumentNo;
+        try {
+            changeInstrumentStmt.setBoolean(1, onLease);
+            changeInstrumentStmt.setInt(2, instrumentNo);
+            int updatedRows = changeInstrumentStmt.executeUpdate();
+            if (updatedRows != 1) {
+                handleException(failureMsg, null);
+            }
+            connection.commit();
+        } catch (SQLException sqle) {
+            handleException(failureMsg, sqle);
+        }
+    }
+
+    /**
      * Retrieves all existing instruments.
      *
      * @return A list with all existing instruments. The list is empty if there are
@@ -361,12 +384,14 @@ public class LeaseDAO {
      *         the list is empty if there are no such account.
      * @throws BankDBException If failed to search for instruments.
      */
-    public List<Instrument> findInstrumentsByType(int typeNo) throws BankDBException {
+    public List<Instrument> findInstrumentsByType(String typeName) throws BankDBException {
         String failureMsg = "Could not search for specified instruments.";
         ResultSet result = null;
         List<Instrument> instruments = new ArrayList<>();
+        String formattedType = typeName.substring(0, 1).toUpperCase() + typeName.substring(1).toLowerCase();
+        System.out.println(formattedType);
         try {
-            findInstrumentsByTypeStmt.setInt(1, typeNo);
+            findInstrumentsByTypeStmt.setString(1, formattedType);
             result = findInstrumentsByTypeStmt.executeQuery();
             while (result.next()) {
                 instruments.add(new Instrument(result.getInt(INSTRUMENT_PK_COLUMN_NAME),
@@ -413,17 +438,17 @@ public class LeaseDAO {
 
         findAllInstrumentsStmt = connection.prepareStatement("SELECT i." + INSTRUMENT_PK_COLUMN_NAME + ", t."
                 + LOOKUP_INSTRUMENT_COLUMN_NAME + ", i." + INSTRUMENT_BRAND_COLUMN_NAME + ", i."
-                + INSTRUMENT_PRICE_COLUMN_NAME + " FROM " + INSTRUMENT_TABLE_NAME + " AS i WHERE i."
-                + INSTRUMENT_ON_LEASE_COLUMN_NAME + " = FALSE INNER JOIN " + LOOKUP_INSTRUMENT_TABLE_NAME
-                + " AS t ON t." + LOOKUP_INSTRUMENT_PK_COLUMN_NAME + " = i." + INSTRUMENT_TYPE_FK_COLUMN_NAME);
+                + INSTRUMENT_PRICE_COLUMN_NAME + " FROM " + INSTRUMENT_TABLE_NAME + " AS i INNER JOIN "
+                + LOOKUP_INSTRUMENT_TABLE_NAME + " AS t ON t." + LOOKUP_INSTRUMENT_PK_COLUMN_NAME + " = i."
+                + INSTRUMENT_TYPE_FK_COLUMN_NAME + " WHERE i." + INSTRUMENT_ON_LEASE_COLUMN_NAME + " = FALSE");
 
         findInstrumentsByTypeStmt = connection.prepareStatement("SELECT i." + INSTRUMENT_PK_COLUMN_NAME + ", t."
                 + LOOKUP_INSTRUMENT_COLUMN_NAME + ", i." + INSTRUMENT_BRAND_COLUMN_NAME + ", i."
-                + INSTRUMENT_PRICE_COLUMN_NAME + " FROM " + INSTRUMENT_TABLE_NAME + " AS i WHERE i."
-                + INSTRUMENT_ON_LEASE_COLUMN_NAME + " = FALSE AND t." + LOOKUP_INSTRUMENT_COLUMN_NAME + " = ?"
-                + " INNER JOIN " + LOOKUP_INSTRUMENT_TABLE_NAME
-                + " AS t ON t." + LOOKUP_INSTRUMENT_PK_COLUMN_NAME + " = i." + INSTRUMENT_TYPE_FK_COLUMN_NAME);
-
+                + INSTRUMENT_PRICE_COLUMN_NAME + " FROM " + INSTRUMENT_TABLE_NAME + " AS i INNER JOIN "
+                + LOOKUP_INSTRUMENT_TABLE_NAME + " AS t ON t." + LOOKUP_INSTRUMENT_PK_COLUMN_NAME + " = i."
+                + INSTRUMENT_TYPE_FK_COLUMN_NAME + " WHERE i." + INSTRUMENT_ON_LEASE_COLUMN_NAME
+                + " = FALSE AND t." + LOOKUP_INSTRUMENT_COLUMN_NAME + " = ?");
+        //
         findAllLookupInstrumentsStmt = connection.prepareStatement(
                 "SELECT l." + LOOKUP_INSTRUMENT_COLUMN_NAME + " FROM " + LOOKUP_INSTRUMENT_TABLE_NAME + " AS l");
 
@@ -434,14 +459,16 @@ public class LeaseDAO {
                 .prepareStatement(
                         "SELECT l." + LEASE_PK_COLUMN_NAME + ", l." + LEASE_LESSEE_FK_COLUMN_NAME + ", l."
                                 + LEASE_ONGOING_COLUMN_NAME + ", l." + LEASE_COMPLETE_COLUMN_NAME + ", l."
-                                + LEASE_START_COLUMN_NAME + ", l." + LEASE_END_COLUMN_NAME + " FROM " + LEASE_TABLE_NAME
+                                + LEASE_START_COLUMN_NAME + ", l." + LEASE_END_COLUMN_NAME + ", l."
+                                + LEASE_INSTRUMENT_FK_COLUMN_NAME + " FROM " + LEASE_TABLE_NAME
                                 + " AS l");
 
         findLeasesByStudentStmt = connection
                 .prepareStatement(
                         "SELECT l." + LEASE_PK_COLUMN_NAME + ", l." + LEASE_LESSEE_FK_COLUMN_NAME + ", l."
                                 + LEASE_ONGOING_COLUMN_NAME + ", l." + LEASE_COMPLETE_COLUMN_NAME + ", l."
-                                + LEASE_START_COLUMN_NAME + ", l." + LEASE_END_COLUMN_NAME + " FROM " + LEASE_TABLE_NAME
+                                + LEASE_START_COLUMN_NAME + ", l." + LEASE_END_COLUMN_NAME + ", l."
+                                + LEASE_INSTRUMENT_FK_COLUMN_NAME + " FROM " + LEASE_TABLE_NAME
                                 + " AS l WHERE l." + LEASE_LESSEE_FK_COLUMN_NAME + " = ?");
 
         createLeaseStmt = connection.prepareStatement("INSERT INTO " + LEASE_TABLE_NAME + "("
@@ -452,7 +479,11 @@ public class LeaseDAO {
         changeLeaseStmt = connection.prepareStatement("UPDATE " + LEASE_TABLE_NAME + " SET " + LEASE_ONGOING_COLUMN_NAME
                 + " = ? WHERE " + LEASE_PK_COLUMN_NAME + " = ?");
 
+        changeInstrumentStmt = connection.prepareStatement("UPDATE " + INSTRUMENT_TABLE_NAME + " SET "
+                + INSTRUMENT_ON_LEASE_COLUMN_NAME + " = ? WHERE " + INSTRUMENT_PK_COLUMN_NAME + " = ?");
+
         // NOTE : Prepared statements should be finished
+        // TODO : No! need to to find instrumentbyleaseNo
         //
         // createHolderStmt = connection.prepareStatement("INSERT INTO " +
         // LESSEE_TABLE_NAME
@@ -538,6 +569,7 @@ public class LeaseDAO {
         if (result.next()) {
             return result.getInt(LESSEE_QUOTA_COLUMN_NAME);
         }
+        // NOTE: This method does not commit transaction on its own.
         return 0;
     }
 }
