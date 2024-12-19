@@ -80,8 +80,10 @@ public class LeaseDAO {
     private PreparedStatement createLeaseStmt;
     private PreparedStatement changeLeaseStmt;
     private PreparedStatement findAllLeasesStmt;
-    private PreparedStatement findLeasesByStudentStmt;
+    private PreparedStatement findLeasesByStudentStmt; 
     private PreparedStatement changeInstrumentStmt;
+    private PreparedStatement changeStudentStmt;
+    private PreparedStatement findLeaseByLeaseStmt;
 
     // private PreparedStatement createHolderStmt;
     // private PreparedStatement findHolderPKStmt;
@@ -211,6 +213,34 @@ public class LeaseDAO {
         return leases;
     }
 
+        /**
+     * Searches for all accounts whose holder has the specified name.
+     *
+     * @param holderName The account holder's name
+     * @return A list with all accounts whose holder has the specified name,
+     *         the list is empty if there are no such account.
+     * @throws BankDBException If failed to search for accounts.
+     */
+    public Lease findLeaseByLease(int leaseNo) throws BankDBException {
+        String failureMsg = "Could not search for specified lease.";
+        ResultSet result = null;
+        Lease leases = null;
+        try {
+            findLeaseByLeaseStmt.setInt(1, leaseNo);
+            result = findLeaseByLeaseStmt.executeQuery();
+            while (result.next()) {
+                leases = new Lease(result.getInt(LEASE_PK_COLUMN_NAME), result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
+                        result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME), result.getBoolean(LEASE_ONGOING_COLUMN_NAME));
+            }
+            connection.commit();
+        } catch (SQLException sqle) {
+            handleException(failureMsg, sqle);
+        } finally {
+            closeResultSet(failureMsg, result);
+        }
+        return leases;
+    }
+
     /**
      * Retrieves all existing leases.
      *
@@ -328,7 +358,29 @@ public class LeaseDAO {
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         }
-    }
+    }    
+    /**
+    * Changes the student with the specified student number.
+    *
+    * @param studentNo The student to change.
+    * @param newQuota  The quota to change to.
+    * @throws BankDBException If unable to delete the specified account.
+    */
+   public void changeLessee(int studentNo, int newQuota) throws BankDBException {
+       String failureMsg = "Could not change student: " + studentNo;
+       try {
+            changeStudentStmt.setInt(1, newQuota);
+            changeStudentStmt.setInt(2, studentNo);
+            int updatedRows = changeStudentStmt.executeUpdate();
+            if (updatedRows != 1) {
+               handleException(failureMsg, null);
+            }
+            // NOTE: May be removed when editing transactions
+            connection.commit();
+       } catch (SQLException sqle) {
+           handleException(failureMsg, sqle);
+       }
+   }
 
     /**
      * Changes the instrument with the specified lease number.
@@ -471,6 +523,16 @@ public class LeaseDAO {
                                 + LEASE_INSTRUMENT_FK_COLUMN_NAME + " FROM " + LEASE_TABLE_NAME
                                 + " AS l WHERE l." + LEASE_LESSEE_FK_COLUMN_NAME + " = ?");
 
+        
+        findLeaseByLeaseStmt = connection
+                .prepareStatement(
+                        "SELECT l." + LEASE_PK_COLUMN_NAME + ", l." + LEASE_LESSEE_FK_COLUMN_NAME + ", l."
+                                + LEASE_ONGOING_COLUMN_NAME + ", l." + LEASE_COMPLETE_COLUMN_NAME + ", l."
+                                + LEASE_START_COLUMN_NAME + ", l." + LEASE_END_COLUMN_NAME + ", l."
+                                + LEASE_INSTRUMENT_FK_COLUMN_NAME + " FROM " + LEASE_TABLE_NAME
+                                + " AS l WHERE l." + LEASE_PK_COLUMN_NAME + " = ?");
+
+
         createLeaseStmt = connection.prepareStatement("INSERT INTO " + LEASE_TABLE_NAME + "("
                 + LEASE_ONGOING_COLUMN_NAME + ", " + LEASE_COMPLETE_COLUMN_NAME + ", " + LEASE_START_COLUMN_NAME + ", "
                 + LEASE_INSTRUMENT_FK_COLUMN_NAME + ", " + LEASE_LESSEE_FK_COLUMN_NAME
@@ -481,6 +543,9 @@ public class LeaseDAO {
 
         changeInstrumentStmt = connection.prepareStatement("UPDATE " + INSTRUMENT_TABLE_NAME + " SET "
                 + INSTRUMENT_ON_LEASE_COLUMN_NAME + " = ? WHERE " + INSTRUMENT_PK_COLUMN_NAME + " = ?");
+
+        changeStudentStmt = connection.prepareStatement("UPDATE " + LESSEE_TABLE_NAME + " SET " + 
+                    LESSEE_QUOTA_COLUMN_NAME + " = ? WHERE " + LESSEE_PK_COLUMN_NAME + " = ?");
 
         // NOTE : Prepared statements should be finished
         // TODO : No! need to to find instrumentbyleaseNo

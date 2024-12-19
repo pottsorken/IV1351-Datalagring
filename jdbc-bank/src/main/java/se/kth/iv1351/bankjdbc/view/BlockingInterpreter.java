@@ -86,9 +86,10 @@ public class BlockingInterpreter {
                         Integer arg2 = Integer.valueOf(cmdLine.getParameter(1));
                         ctrl.createLease(arg1, arg2);
                         break;
-                    case TERMINATE:
+                        case TERMINATE:
                         Integer arg = Integer.valueOf(cmdLine.getParameter(0));
                         ctrl.terminateLease(arg);
+                        // TODO: check if lease is active in terminateLease()
                         break;
                     case LISTINSTR:
                         List<? extends InstrumentDTO> instruments = null;

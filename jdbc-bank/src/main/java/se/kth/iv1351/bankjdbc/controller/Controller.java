@@ -75,7 +75,9 @@ public class Controller {
             if (quota <= 0) {
                 throw new AccountException(failureMsg);
             } else {
+                
                 rentDb.changeInstrument(instrumentNo, true);
+                rentDb.changeLessee(lesseeNo, quota - 1);
                 rentDb.createLease(new Lease(lesseeNo, instrumentNo));
             }
         } catch (Exception e) {
@@ -114,6 +116,27 @@ public class Controller {
 
         try {
             return rentDb.findLeasesByLessee(lesseeNo);
+        } catch (Exception e) {
+            throw new AccountException("Could not search for lease.", e);
+        }
+    }
+
+        /**
+     * Lists all accounts owned by the specified account holder.
+     * 
+     * @param holderName The holder who's accounts shall be listed.
+     * @return A list with all accounts owned by the specified holder. The list is
+     *         empty if the holder does not have any accounts, or if there is no
+     *         such holder.
+     * @throws AccountException If unable to retrieve the holder's accounts.
+     */
+    public Lease getLeaseForLeaseNo(int leaseNo) throws AccountException {
+        if (leaseNo == 0) {
+            return null;
+        }
+
+        try {
+            return rentDb.findLeaseByLease(leaseNo);
         } catch (Exception e) {
             throw new AccountException("Could not search for lease.", e);
         }
@@ -254,8 +277,12 @@ public class Controller {
             throw new AccountException(failureMsg);
         }
         // TODO: get instrumntNoByLease
+        Lease ls = getLeaseForLeaseNo(leaseNo);
         try {
+            int quota = rentDb.findQuotaByPK(ls.getLessee());
             // rentDb.changeInstrument(instrumentNo, false);
+            rentDb.changeInstrument(ls.getInstrument(), false);
+            rentDb.changeLessee(ls.getLessee(), quota + 1);
             rentDb.changeLease(leaseNo, false);
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);
