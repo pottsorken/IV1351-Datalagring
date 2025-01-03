@@ -80,6 +80,7 @@ public class Controller {
                 rentDb.changeInstrument(instrumentNo, true);
                 rentDb.changeLessee(lesseeNo, quota - 1);
                 rentDb.createLease(new Lease(lesseeNo, instrumentNo));
+                commitOngoingTransaction(failureMsg);
             }
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);
@@ -94,8 +95,11 @@ public class Controller {
      * @throws AccountException If unable to retrieve accounts.
      */
     public List<? extends LeaseDTO> getAllLeases() throws AccountException {
+        List<Lease> leases = new ArrayList<>();
         try {
-            return rentDb.findAllLeases();
+            leases = rentDb.findAllLeases();
+            commitOngoingTransaction("Unable to list leases.");
+            return leases;
         } catch (Exception e) {
             throw new AccountException("Unable to list leases.", e);
         }
@@ -114,9 +118,12 @@ public class Controller {
         if (lesseeNo == 0) {
             return new ArrayList<>();
         }
+        List<Lease> leases = new ArrayList<>();
 
         try {
-            return rentDb.findLeasesByLessee(lesseeNo);
+            leases = rentDb.findLeasesByLessee(lesseeNo);
+            commitOngoingTransaction("Could not search for lease.");
+            return leases;
         } catch (Exception e) {
             throw new AccountException("Could not search for lease.", e);
         }
@@ -135,9 +142,12 @@ public class Controller {
         if (leaseNo == 0) {
             return null;
         }
+        Lease lease = null;
 
         try {
-            return rentDb.findLeaseByLease(leaseNo);
+            lease = rentDb.findLeaseByLease(leaseNo);
+            commitOngoingTransaction("Could not search for lease.");
+            return lease;
         } catch (Exception e) {
             throw new AccountException("Could not search for lease.", e);
         }
@@ -151,8 +161,11 @@ public class Controller {
      * @throws AccountException If unable to retrieve accounts.
      */
     public List<? extends InstrumentDTO> getAllInstruments() throws AccountException {
+        List<Instrument> instruments = new ArrayList<>();
         try {
-            return rentDb.findAllInstruments();
+            instruments = rentDb.findAllInstruments();
+            commitOngoingTransaction("Unable to list instruments.");
+            return instruments;
         } catch (Exception e) {
             throw new AccountException("Unable to list instruments.", e);
         }
@@ -171,9 +184,12 @@ public class Controller {
         if (typeName == null) {
             return new ArrayList<>();
         }
+        List<Instrument> instruments = new ArrayList<>();
 
         try {
-            return rentDb.findInstrumentsByType(typeName);
+            instruments = rentDb.findInstrumentsByType(typeName);
+            commitOngoingTransaction("Could not search for instruments.");
+            return instruments;
         } catch (Exception e) {
             throw new AccountException("Could not search for instruments.", e);
         }
