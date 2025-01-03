@@ -136,7 +136,7 @@ public class LeaseDAO {
                 handleException(failureMsg, null);
             }
 
-            connection.commit();
+            //connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         }
@@ -205,7 +205,7 @@ public class LeaseDAO {
                 leases.add(new Lease(result.getInt(LEASE_PK_COLUMN_NAME), result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
                         result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME), result.getBoolean(LEASE_ONGOING_COLUMN_NAME)));
             }
-            connection.commit();
+            //connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         } finally {
@@ -233,7 +233,7 @@ public class LeaseDAO {
                 leases = new Lease(result.getInt(LEASE_PK_COLUMN_NAME), result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
                         result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME), result.getBoolean(LEASE_ONGOING_COLUMN_NAME));
             }
-            connection.commit();
+            //connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         } finally {
@@ -258,7 +258,7 @@ public class LeaseDAO {
                 leases.add(new Lease(result.getInt(LEASE_PK_COLUMN_NAME), result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
                         result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME), result.getBoolean(LEASE_ONGOING_COLUMN_NAME)));
             }
-            connection.commit();
+            //connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         }
@@ -355,7 +355,7 @@ public class LeaseDAO {
             if (updatedRows != 1) {
                 handleException(failureMsg, null);
             }
-            connection.commit();
+            //connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         }
@@ -377,7 +377,7 @@ public class LeaseDAO {
                handleException(failureMsg, null);
             }
             // NOTE: May be removed when editing transactions
-            connection.commit();
+            //connection.commit();
        } catch (SQLException sqle) {
            handleException(failureMsg, sqle);
        }
@@ -399,7 +399,7 @@ public class LeaseDAO {
             if (updatedRows != 1) {
                 handleException(failureMsg, null);
             }
-            connection.commit();
+            //connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         }
@@ -422,7 +422,7 @@ public class LeaseDAO {
                         result.getString(LOOKUP_INSTRUMENT_COLUMN_NAME), result.getString(INSTRUMENT_BRAND_COLUMN_NAME),
                         result.getInt(INSTRUMENT_PRICE_COLUMN_NAME)));
             }
-            connection.commit();
+            //connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         }
@@ -450,7 +450,7 @@ public class LeaseDAO {
                         result.getString(LOOKUP_INSTRUMENT_COLUMN_NAME), result.getString(INSTRUMENT_BRAND_COLUMN_NAME),
                         result.getInt(INSTRUMENT_PRICE_COLUMN_NAME), result.getBoolean(INSTRUMENT_ON_LEASE_COLUMN_NAME) );
             }
-            connection.commit();
+            //connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         } finally {
@@ -481,7 +481,7 @@ public class LeaseDAO {
                         result.getString(LOOKUP_INSTRUMENT_COLUMN_NAME), result.getString(INSTRUMENT_BRAND_COLUMN_NAME),
                         result.getInt(INSTRUMENT_PRICE_COLUMN_NAME)));
             }
-            connection.commit();
+            //connection.commit();
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         } finally {
