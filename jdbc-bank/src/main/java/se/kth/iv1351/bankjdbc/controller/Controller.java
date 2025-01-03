@@ -70,9 +70,10 @@ public class Controller {
             int quota = rentDb.findQuotaByPK(lesseeNo);
 
             System.out.println(quota);
+            Instrument instr = rentDb.findInstrumentById(instrumentNo);
             // TODO: Add check that specified instrument is free
             // TODO: Decrement quota value (change quota prepare stmt)
-            if (quota <= 0) {
+            if (quota <= 0 || instr.getOnLease() == true) {
                 throw new AccountException(failureMsg);
             } else {
                 
@@ -284,6 +285,7 @@ public class Controller {
             rentDb.changeInstrument(ls.getInstrument(), false);
             rentDb.changeLessee(ls.getLessee(), quota + 1);
             rentDb.changeLease(leaseNo, false);
+            commitOngoingTransaction(failureMsg);
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);
         }

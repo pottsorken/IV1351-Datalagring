@@ -84,6 +84,7 @@ public class LeaseDAO {
     private PreparedStatement changeInstrumentStmt;
     private PreparedStatement changeStudentStmt;
     private PreparedStatement findLeaseByLeaseStmt;
+    private PreparedStatement findInstrumentByNoStmt;
 
     // private PreparedStatement createHolderStmt;
     // private PreparedStatement findHolderPKStmt;
@@ -428,6 +429,36 @@ public class LeaseDAO {
         return instruments;
     }
 
+
+    /**
+     * Searches for all instruments whose type has the specified type id.
+     *
+     * @param typeNo The instruments's type number
+     * @return A list with all instruments whose type has the specified id,
+     *         the list is empty if there are no such account.
+     * @throws BankDBException If failed to search for instruments.
+     */
+    public Instrument findInstrumentById(int instrumentNo) throws BankDBException {
+        String failureMsg = "Could not search for specified instrument.";
+        ResultSet result = null;
+        Instrument instr = null;
+        try {
+            findInstrumentByNoStmt.setInt(1, instrumentNo);
+            result = findInstrumentByNoStmt.executeQuery();
+            while (result.next()) {
+                instr = new Instrument(result.getInt(INSTRUMENT_PK_COLUMN_NAME),
+                        result.getString(LOOKUP_INSTRUMENT_COLUMN_NAME), result.getString(INSTRUMENT_BRAND_COLUMN_NAME),
+                        result.getInt(INSTRUMENT_PRICE_COLUMN_NAME), result.getBoolean(INSTRUMENT_ON_LEASE_COLUMN_NAME) );
+            }
+            connection.commit();
+        } catch (SQLException sqle) {
+            handleException(failureMsg, sqle);
+        } finally {
+            closeResultSet(failureMsg, result);
+        }
+        return instr;
+    }
+
     /**
      * Searches for all instruments whose type has the specified type id.
      *
@@ -500,6 +531,14 @@ public class LeaseDAO {
                 + LOOKUP_INSTRUMENT_TABLE_NAME + " AS t ON t." + LOOKUP_INSTRUMENT_PK_COLUMN_NAME + " = i."
                 + INSTRUMENT_TYPE_FK_COLUMN_NAME + " WHERE i." + INSTRUMENT_ON_LEASE_COLUMN_NAME
                 + " = FALSE AND t." + LOOKUP_INSTRUMENT_COLUMN_NAME + " = ?");
+
+        findInstrumentByNoStmt = connection.prepareStatement("SELECT i." + INSTRUMENT_PK_COLUMN_NAME + ", t."
+                + LOOKUP_INSTRUMENT_COLUMN_NAME + ", i." + INSTRUMENT_BRAND_COLUMN_NAME + ", i."
+                + INSTRUMENT_PRICE_COLUMN_NAME + ", i." + INSTRUMENT_ON_LEASE_COLUMN_NAME + " FROM " + INSTRUMENT_TABLE_NAME + " AS i INNER JOIN "
+                + LOOKUP_INSTRUMENT_TABLE_NAME + " AS t ON t." + LOOKUP_INSTRUMENT_PK_COLUMN_NAME + " = i."
+                + INSTRUMENT_TYPE_FK_COLUMN_NAME + " WHERE i." + INSTRUMENT_PK_COLUMN_NAME
+                + " = ?");
+
         //
         findAllLookupInstrumentsStmt = connection.prepareStatement(
                 "SELECT l." + LOOKUP_INSTRUMENT_COLUMN_NAME + " FROM " + LOOKUP_INSTRUMENT_TABLE_NAME + " AS l");
