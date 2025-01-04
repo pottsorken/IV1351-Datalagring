@@ -89,14 +89,13 @@ public class BlockingInterpreter {
                         case TERMINATE:
                         Integer arg = Integer.valueOf(cmdLine.getParameter(0));
                         ctrl.terminateLease(arg);
-                        // TODO: check if lease is active in terminateLease()
                         break;
                     case LISTINSTR:
                         List<? extends InstrumentDTO> instruments = null;
                         if (cmdLine.getParameter(0).equals("")) {
                             instruments = ctrl.getAllInstruments();
                         } else {
-                            System.out.println(" hey" + cmdLine.getParameter(0).toString());
+                            //System.out.println(" hey" + cmdLine.getParameter(0).toString());
                             instruments = ctrl.getInstrumentsByType(cmdLine.getParameter(0).toString());
                         }
                         for (InstrumentDTO instrument : instruments) {
@@ -122,22 +121,7 @@ public class BlockingInterpreter {
                         }
                         break;
 
-                    // case DEPOSIT:
-                    // ctrl.deposit(cmdLine.getParameter(0),
-                    // Integer.parseInt(cmdLine.getParameter(1)));
-                    // break;
-                    // case WITHDRAW:
-                    // ctrl.withdraw(cmdLine.getParameter(0),
-                    // Integer.parseInt(cmdLine.getParameter(1)));
-                    // break;
-                    // case BALANCE:
-                    // AccountDTO acct = ctrl.getAccount(cmdLine.getParameter(0));
-                    // if (acct != null) {
-                    // System.out.println(acct.getBalance());
-                    // } else {
-                    // System.out.println("No such account");
-                    // }
-                    // break;
+
                     default:
                         System.out.println("illegal command");
                 }

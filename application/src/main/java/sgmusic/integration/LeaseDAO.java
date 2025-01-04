@@ -35,9 +35,6 @@ import java.sql.DriverManager;
 import java.sql.Connection;
 
 
-
-
-
 /**
  * This data access object (DAO) encapsulates all database calls in the bank
  * application. No code outside this class shall have any knowledge about the
@@ -69,8 +66,6 @@ public class LeaseDAO {
     private static final String INSTRUMENT_BRAND_COLUMN_NAME = "brand";
     private static final String INSTRUMENT_TYPE_FK_COLUMN_NAME = LOOKUP_INSTRUMENT_PK_COLUMN_NAME;
 
-    // private static final String BALANCE_COLUMN_NAME = "balance";
-    // private static final String HOLDER_FK_COLUMN_NAME = LESSEE_PK_COLUMN_NAME;
 
     private Connection connection;
     private PreparedStatement findAllInstrumentsStmt;
@@ -89,11 +84,11 @@ public class LeaseDAO {
 
 
     /**
-     * Constructs a new DAO object connected to the bank database.
+     * Constructs a new DAO object connected to the soundgoodmusic database.
      */
     public LeaseDAO() throws SGMusicException {
         try {
-            connectToBankDB();
+            connectToSGMusic();
             prepareStatements();
         } catch (ClassNotFoundException | SQLException exception) {
             throw new SGMusicException("Could not connect to datasource.", exception);
@@ -103,7 +98,7 @@ public class LeaseDAO {
     /**
      * Creates a new lease.
      *
-     * @param account The lease to create.
+     * @param lease The lease to create.
      * @throws SGMusicException If failed to create the specified account.
      */
     public void createLease(LeaseDTO lease) throws SGMusicException { // NOTE: LeaseDTO may be Lease
@@ -113,12 +108,6 @@ public class LeaseDAO {
             int lesseePK = lease.getLessee();
             if (lesseePK == 0) {
                 handleException(failureMsg, null);
-                // createHolderStmt.setString(1, account.getHolderName());
-                // updatedRows = createHolderStmt.executeUpdate();
-                // if (updatedRows != 1) {
-                // handleException(failureMsg, null);
-                // }
-                // holderPK = findHolderPKByName(account.getHolderName());
             }
 
             createLeaseStmt.setInt(1, lease.getInstrument());
@@ -135,12 +124,12 @@ public class LeaseDAO {
     }
 
     /**
-     * Searches for all accounts whose holder has the specified name.
+     * Searches for all leases whose lessee has the specified id.
      *
-     * @param holderName The account holder's name
-     * @return A list with all accounts whose holder has the specified name,
-     *         the list is empty if there are no such account.
-     * @throws SGMusicException If failed to search for accounts.
+     * @param lesseeNo The lessees id
+     * @return A list with all leases whose lessee has the specified id,
+     *         the list is empty if there are no such lease.
+     * @throws SGMusicException If failed to search for leases.
      */
     public List<Lease> findLeasesByLessee(int lesseeNo) throws SGMusicException {
         String failureMsg = "Could not search for specified leases.";
@@ -162,13 +151,13 @@ public class LeaseDAO {
         return leases;
     }
 
-        /**
-     * Searches for all accounts whose holder has the specified name.
+    /**
+     * Searches for a lease whose id is specified.
      *
-     * @param holderName The account holder's name
-     * @return A list with all accounts whose holder has the specified name,
-     *         the list is empty if there are no such account.
-     * @throws SGMusicException If failed to search for accounts.
+     * @param leaseNo The id of the lease
+     * @return A lease who has the same id as the one specified.
+     *         Returns null if there are no such lease.
+     * @throws SGMusicException If failed to search for lease.
      */
     public Lease findLeaseByLease(int leaseNo) throws SGMusicException {
         String failureMsg = "Could not search for specified lease.";
@@ -194,7 +183,7 @@ public class LeaseDAO {
      * Retrieves all existing leases.
      *
      * @return A list with all existing leases. The list is empty if there are no
-     *         accounts.
+     *         leases.
      * @throws SGMusicException If failed to search for leases.
      */
     public List<Lease> findAllLeases() throws SGMusicException {
@@ -218,7 +207,7 @@ public class LeaseDAO {
      *
      * @param leaseNo The lease to change.
      * @param active  The state to change lease to.
-     * @throws SGMusicException If unable to delete the specified account.
+     * @throws SGMusicException If unable to change the specified lease.
      */
     public void changeLease(int leaseNo, boolean active) throws SGMusicException {
         String failureMsg = "Could not change lease: " + leaseNo;
@@ -233,13 +222,14 @@ public class LeaseDAO {
         } catch (SQLException sqle) {
             handleException(failureMsg, sqle);
         }
-    }    
+    }
+
     /**
-    * Changes the student with the specified student number.
+    * Changes the quota of a student with the specified student number.
     *
     * @param studentNo The student to change.
     * @param newQuota  The quota to change to.
-    * @throws SGMusicException If unable to delete the specified account.
+    * @throws SGMusicException If unable to change the specified student/lessee.
     */
    public void changeLessee(int studentNo, int newQuota) throws SGMusicException {
        String failureMsg = "Could not change student: " + studentNo;
@@ -250,7 +240,6 @@ public class LeaseDAO {
             if (updatedRows != 1) {
                handleException(failureMsg, null);
             }
-            // NOTE: May be removed when editing transactions
             //connection.commit();
        } catch (SQLException sqle) {
            handleException(failureMsg, sqle);
@@ -258,11 +247,11 @@ public class LeaseDAO {
    }
 
     /**
-     * Changes the instrument with the specified lease number.
+     * Changes the state of the instrument with the specified instrument number.
      *
      * @param instrumentNo The instrument to change.
      * @param onLease      The state to change instrument to.
-     * @throws SGMusicException If unable to change the specified account.
+     * @throws SGMusicException If unable to change the specified instrument.
      */
     public void changeInstrument(int instrumentNo, boolean onLease) throws SGMusicException {
         String failureMsg = "Could not change instrument: " + instrumentNo;
@@ -282,8 +271,7 @@ public class LeaseDAO {
     /**
      * Retrieves all existing instruments.
      *
-     * @return A list with all existing instruments. The list is empty if there are
-     *         no
+     * @return A list with all existing instruments. The list is empty if there are no
      *         instruments.
      * @throws SGMusicException If failed to search for instruments.
      */
@@ -303,14 +291,12 @@ public class LeaseDAO {
         return instruments;
     }
 
-
     /**
-     * Searches for all instruments whose type has the specified type id.
+     * Searches for the instrument whose id is specified.
      *
-     * @param typeNo The instruments's type number
-     * @return A list with all instruments whose type has the specified id,
-     *         the list is empty if there are no such account.
-     * @throws SGMusicException If failed to search for instruments.
+     * @param typeNo The instrument's number
+     * @return The instrument with the specified id.
+     * @throws SGMusicException If failed to search for instrument.
      */
     public Instrument findInstrumentById(int instrumentNo) throws SGMusicException {
         String failureMsg = "Could not search for specified instrument.";
@@ -377,13 +363,9 @@ public class LeaseDAO {
         }
     }
 
-    // TODO: change name of method
-    private void connectToBankDB() throws ClassNotFoundException, SQLException {
+    private void connectToSGMusic() throws ClassNotFoundException, SQLException {
         connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/soundgoodmusic",
                 "broli", "12345");
-        // connection =
-        // DriverManager.getConnection("jdbc:mysql://localhost:3306/bankdb",
-        // "mysql", "mysql");
         connection.setAutoCommit(false);
     }
 
@@ -460,56 +442,6 @@ public class LeaseDAO {
         changeStudentStmt = connection.prepareStatement("UPDATE " + LESSEE_TABLE_NAME + " SET " + 
                     LESSEE_QUOTA_COLUMN_NAME + " = ? WHERE " + LESSEE_PK_COLUMN_NAME + " = ?");
 
-        // NOTE : Prepared statements should be finished
-        // TODO : No! need to to find instrumentbyleaseNo
-        //
-        // createHolderStmt = connection.prepareStatement("INSERT INTO " +
-        // LESSEE_TABLE_NAME
-        // + "(" + LESSEE_COLUMN_NAME + ") VALUES (?)");
-        //
-        // createAccountStmt = connection.prepareStatement("INSERT INTO " +
-        // LEASE_TABLE_NAME
-        // + "(" + LEASE_ID_COLUMN_NAME + ", " + BALANCE_COLUMN_NAME + ", "
-        // + HOLDER_FK_COLUMN_NAME + ") VALUES (?, ?, ?)");
-        //
-        // findHolderPKStmt = connection.prepareStatement("SELECT " +
-        // LESSEE_PK_COLUMN_NAME
-        // + " FROM " + LESSEE_TABLE_NAME + " WHERE " + LESSEE_COLUMN_NAME + " = ?");
-        //
-        // findAccountByAcctNoStmt = connection.prepareStatement("SELECT a." +
-        // LEASE_ID_COLUMN_NAME
-        // + ", a." + BALANCE_COLUMN_NAME + ", h." + LESSEE_COLUMN_NAME + " from "
-        // + LEASE_TABLE_NAME + " a INNER JOIN " + LESSEE_TABLE_NAME + " h USING ("
-        // + LESSEE_PK_COLUMN_NAME + ") WHERE a." + LEASE_ID_COLUMN_NAME + " = ?");
-        //
-        // findAccountByAcctNoStmtLockingForUpdate = connection.prepareStatement("SELECT
-        // a."
-        // + LEASE_ID_COLUMN_NAME + ", a." + BALANCE_COLUMN_NAME + ", h."
-        // + LESSEE_COLUMN_NAME + " from " + LEASE_TABLE_NAME + " a INNER JOIN "
-        // + LESSEE_TABLE_NAME + " h USING (" + LESSEE_PK_COLUMN_NAME + ") WHERE a."
-        // + LEASE_ID_COLUMN_NAME + " = ? FOR NO KEY UPDATE");
-        //
-        // findAccountByNameStmt = connection.prepareStatement("SELECT a." +
-        // LEASE_ID_COLUMN_NAME
-        // + ", a." + BALANCE_COLUMN_NAME + ", h." + LESSEE_COLUMN_NAME + " from "
-        // + LEASE_TABLE_NAME + " a INNER JOIN "
-        // + LESSEE_TABLE_NAME + " h ON a." + HOLDER_FK_COLUMN_NAME
-        // + " = h." + LESSEE_PK_COLUMN_NAME + " WHERE h." + LESSEE_COLUMN_NAME + " =
-        // ?");
-        //
-        // findAllAccountsStmt = connection.prepareStatement("SELECT h." +
-        // LESSEE_COLUMN_NAME
-        // + ", a." + LEASE_ID_COLUMN_NAME + ", a." + BALANCE_COLUMN_NAME + " FROM "
-        // + LESSEE_TABLE_NAME + " h INNER JOIN " + LEASE_TABLE_NAME + " a ON a."
-        // + HOLDER_FK_COLUMN_NAME + " = h." + LESSEE_PK_COLUMN_NAME);
-        //
-        // changeBalanceStmt = connection.prepareStatement("UPDATE " + LEASE_TABLE_NAME
-        // + " SET " + BALANCE_COLUMN_NAME + " = ? WHERE " + LEASE_ID_COLUMN_NAME + " =
-        // ? ");
-        //
-        // deleteAccountStmt = connection.prepareStatement("DELETE FROM " +
-        // LEASE_TABLE_NAME
-        // + " WHERE " + LEASE_ID_COLUMN_NAME + " = ?");
     }
 
     private void handleException(String failureMsg, Exception cause) throws SGMusicException {
@@ -535,10 +467,6 @@ public class LeaseDAO {
             throw new SGMusicException(failureMsg + " Could not close result set.", e);
         }
     }
-
-    // private int createAccountNo() {
-    // return (int) Math.floor(Math.random() * Integer.MAX_VALUE);
-    // }
 
     public int findQuotaByPK(int lesseeNo) throws SQLException {
         ResultSet result = null;

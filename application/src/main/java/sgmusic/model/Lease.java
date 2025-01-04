@@ -10,9 +10,6 @@ public class Lease implements LeaseDTO {
     private int lesseeNo;
     private int instrumentNo;
     private boolean active;
-    // private boolean finished; // NOTE: May be unneccesary
-    // private String startDate;
-    // private String endDate;
 
     public Lease(int lesseeNo, int instrumentNo) {
         this.leaseNo = 0;

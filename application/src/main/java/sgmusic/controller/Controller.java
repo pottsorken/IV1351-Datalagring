@@ -55,8 +55,8 @@ public class Controller {
     /**
      * Creates a new lease for the specified student and instrument.
      * 
-     * @param holderName The account holder's name.
-     * @throws AccountException If unable to create account.
+     * @param holderName The id of the lessee.
+     * @throws AccountException If unable to create lease.
      */
     public void createLease(int lesseeNo, int instrumentNo) throws AccountException {
         String failureMsg = "Could not create lease for: " + lesseeNo;
@@ -70,8 +70,7 @@ public class Controller {
 
             System.out.println(quota);
             Instrument instr = rentDb.findInstrumentById(instrumentNo);
-            // TODO: Add check that specified instrument is free
-            // TODO: Decrement quota value (change quota prepare stmt)
+            
             if (quota <= 0 || instr.getOnLease() == true) {
                 throw new AccountException(failureMsg);
             } else {
@@ -87,11 +86,11 @@ public class Controller {
     }
 
     /**
-     * Lists all accounts in the whole bank.
+     * Lists all leases in the whole database.
      * 
-     * @return A list containing all accounts. The list is empty if there are no
-     *         accounts.
-     * @throws AccountException If unable to retrieve accounts.
+     * @return A list containing all leases. The list is empty if there are no
+     *         leases.
+     * @throws AccountException If unable to retrieve leases.
      */
     public List<? extends LeaseDTO> getAllLeases() throws AccountException {
         List<Lease> leases = new ArrayList<>();
@@ -105,13 +104,13 @@ public class Controller {
     }
 
     /**
-     * Lists all accounts owned by the specified account holder.
+     * Lists all leases owned by the specified student/lessee.
      * 
-     * @param holderName The holder who's accounts shall be listed.
-     * @return A list with all accounts owned by the specified holder. The list is
-     *         empty if the holder does not have any accounts, or if there is no
-     *         such holder.
-     * @throws AccountException If unable to retrieve the holder's accounts.
+     * @param lesseeNo The student who's leases shall be listed.
+     * @return A list with all leases owned by the specified student. The list is
+     *         empty if the student does not have any leases, or if there is no
+     *         such student.
+     * @throws AccountException If unable to retrieve the student's accounts.
      */
     public List<? extends LeaseDTO> getLeasesForStudent(int lesseeNo) throws AccountException {
         if (lesseeNo == 0) {
@@ -129,13 +128,11 @@ public class Controller {
     }
 
         /**
-     * Lists all accounts owned by the specified account holder.
+     * Lists the lease that maches specified number.
      * 
-     * @param holderName The holder who's accounts shall be listed.
-     * @return A list with all accounts owned by the specified holder. The list is
-     *         empty if the holder does not have any accounts, or if there is no
-     *         such holder.
-     * @throws AccountException If unable to retrieve the holder's accounts.
+     * @param holderName The lease which shall be listed.
+     * @return A lease that matches the specified number.
+     * @throws AccountException If unable to retrieve the lease.
      */
     public Lease getLeaseForLeaseNo(int leaseNo) throws AccountException {
         if (leaseNo == 0) {
@@ -153,11 +150,11 @@ public class Controller {
     }
 
     /**
-     * Lists all accounts in the whole bank.
+     * Lists all instruments that is vailable for rent.
      * 
-     * @return A list containing all accounts. The list is empty if there are no
-     *         accounts.
-     * @throws AccountException If unable to retrieve accounts.
+     * @return A list containing all instruments. The list is empty if there are no
+     *         instruments.
+     * @throws AccountException If unable to retrieve instruments.
      */
     public List<? extends InstrumentDTO> getAllInstruments() throws AccountException {
         List<Instrument> instruments = new ArrayList<>();
@@ -171,13 +168,13 @@ public class Controller {
     }
 
     /**
-     * Lists all accounts owned by the specified account holder.
+     * Lists all instruments of a specific type.
      * 
-     * @param holderName The holder who's accounts shall be listed.
-     * @return A list with all accounts owned by the specified holder. The list is
-     *         empty if the holder does not have any accounts, or if there is no
-     *         such holder.
-     * @throws AccountException If unable to retrieve the holder's accounts.
+     * @param typeName The type of instrument.
+     * @return A list with all instruments of a certain type. The list is
+     *         empty if there is no available instruments of that type.
+     *
+     * @throws AccountException If unable to retrieve the instruments.
      */
     public List<? extends InstrumentDTO> getInstrumentsByType(String typeName) throws AccountException {
         if (typeName == null) {
@@ -194,84 +191,6 @@ public class Controller {
         }
     }
 
-    /// **
-    // * Retrieves the account with the specified number.
-    // *
-    // * @param acctNo The number of the searched account.
-    // * @return The account with the specified account number, or <code>null</code>
-    // * if there is no such account.
-    // * @throws AccountException If unable to retrieve the account.
-    // */
-    // public AccountDTO getAccount(String acctNo) throws AccountException {
-    // if (acctNo == null) {
-    // return null;
-    // }
-    //
-    // try {
-    // return rentDb.findAccountByAcctNo(acctNo, false);
-    // } catch (Exception e) {
-    // throw new AccountException("Could not search for account.", e);
-    // }
-    // }
-
-    /// **
-    // * Deposits the specified amount to the account with the specified account
-    // * number.
-    // *
-    // * @param acctNo The number of the account to which to deposit.
-    // * @param amt The amount to deposit.
-    // * @throws RejectedException If not allowed to deposit the specified amount.
-    // * @throws AccountException If failed to deposit.
-    // */
-    // public void deposit(String acctNo, int amt) throws RejectedException,
-    /// AccountException {
-    // String failureMsg = "Could not deposit to account: " + acctNo;
-    //
-    // if (acctNo == null) {
-    // throw new AccountException(failureMsg);
-    // }
-    //
-    // try {
-    // Account acct = rentDb.findAccountByAcctNo(acctNo, true);
-    // acct.deposit(amt);
-    // rentDb.updateAccount(acct);
-    // } catch (SGMusicException bdbe) {
-    // throw new AccountException(failureMsg, bdbe);
-    // } catch (Exception e) {
-    // commitOngoingTransaction(failureMsg);
-    // throw e;
-    // }
-    // }
-
-    /// **
-    // * Withdraws the specified amount from the account with the specified account
-    // * number.
-    // *
-    // * @param acctNo The number of the account from which to withdraw.
-    // * @param amt The amount to withdraw.
-    // * @throws RejectedException If not allowed to withdraw the specified amount.
-    // * @throws AccountException If failed to withdraw.
-    // */
-    // public void withdraw(String acctNo, int amt) throws RejectedException,
-    /// AccountException {
-    // String failureMsg = "Could not withdraw from account: " + acctNo;
-    //
-    // if (acctNo == null) {
-    // throw new AccountException(failureMsg);
-    // }
-    //
-    // try {
-    // Account acct = rentDb.findAccountByAcctNo(acctNo, true);
-    // acct.withdraw(amt);
-    // rentDb.updateAccount(acct);
-    // } catch (SGMusicException bdbe) {
-    // throw new AccountException(failureMsg, bdbe);
-    // } catch (Exception e) {
-    // commitOngoingTransaction(failureMsg);
-    // throw e;
-    // }
-    // }
-
     private void commitOngoingTransaction(String failureMsg) throws AccountException {
         try {
             rentDb.commit();
@@ -281,10 +200,10 @@ public class Controller {
     }
 
     /**
-     * Deletes the account with the specified account number.
-     * 
-     * @param acctNo The number of the account that shall be deleted.
-     * @throws AccountException If failed to delete the specified account.
+     * Terminates the lease with the specified lease number.
+     *
+     * @param leaseNo The number of the lease that shall be terminated.
+     * @throws AccountException If failed to terminate the specified lease.
      */
     public void terminateLease(int leaseNo) throws AccountException {
         String failureMsg = "Could not terminate lease: " + leaseNo;
@@ -292,7 +211,6 @@ public class Controller {
         if (leaseNo <= 0) {
             throw new AccountException(failureMsg);
         }
-        // TODO: get instrumntNoByLease
         Lease ls = getLeaseForLeaseNo(leaseNo);
         try {
             int quota = rentDb.findQuotaByPK(ls.getLessee());

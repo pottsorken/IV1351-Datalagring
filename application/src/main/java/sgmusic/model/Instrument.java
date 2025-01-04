@@ -12,13 +12,6 @@ public class Instrument implements InstrumentDTO {
     private int leasePrice;
     private boolean onLease;
 
-    // private int leaseNo;
-    // private int lesseeNo;
-    // private int instrumentNo;
-    // private boolean active;
-    // private boolean finished; // NOTE: May be unneccesary
-    // private String startDate;
-    // private String endDate;
     
     public Instrument(int instrumentNo, String type, String brand, int price, boolean isOnLease) {
         this.instrumentNo = instrumentNo;
