@@ -21,19 +21,18 @@
  * THE SOFTWARE.
  */
 
-package se.kth.iv1351.bankjdbc.controller;
+package sgmusic.controller;
 
-import java.util.ArrayList;
 import java.util.List;
+import sgmusic.integration.LeaseDAO;
+import sgmusic.integration.SGMusicException;
+import sgmusic.model.AccountException;
+import sgmusic.model.Instrument;
+import sgmusic.model.InstrumentDTO;
+import sgmusic.model.Lease;
+import sgmusic.model.LeaseDTO;
+import java.util.ArrayList;
 
-import se.kth.iv1351.bankjdbc.integration.LeaseDAO;
-import se.kth.iv1351.bankjdbc.integration.BankDBException;
-import se.kth.iv1351.bankjdbc.model.Lease;
-import se.kth.iv1351.bankjdbc.model.LeaseDTO;
-import se.kth.iv1351.bankjdbc.model.Instrument;
-import se.kth.iv1351.bankjdbc.model.InstrumentDTO;
-import se.kth.iv1351.bankjdbc.model.AccountException;
-import se.kth.iv1351.bankjdbc.model.RejectedException;
 
 /**
  * This is the application's only controller, all calls to the model pass here.
@@ -47,9 +46,9 @@ public class Controller {
     /**
      * Creates a new instance, and retrieves a connection to the database.
      * 
-     * @throws BankDBException If unable to connect to the database.
+     * @throws SGMusicException If unable to connect to the database.
      */
-    public Controller() throws BankDBException {
+    public Controller() throws SGMusicException {
         rentDb = new LeaseDAO();
     }
 
@@ -236,7 +235,7 @@ public class Controller {
     // Account acct = rentDb.findAccountByAcctNo(acctNo, true);
     // acct.deposit(amt);
     // rentDb.updateAccount(acct);
-    // } catch (BankDBException bdbe) {
+    // } catch (SGMusicException bdbe) {
     // throw new AccountException(failureMsg, bdbe);
     // } catch (Exception e) {
     // commitOngoingTransaction(failureMsg);
@@ -265,7 +264,7 @@ public class Controller {
     // Account acct = rentDb.findAccountByAcctNo(acctNo, true);
     // acct.withdraw(amt);
     // rentDb.updateAccount(acct);
-    // } catch (BankDBException bdbe) {
+    // } catch (SGMusicException bdbe) {
     // throw new AccountException(failureMsg, bdbe);
     // } catch (Exception e) {
     // commitOngoingTransaction(failureMsg);
@@ -276,7 +275,7 @@ public class Controller {
     private void commitOngoingTransaction(String failureMsg) throws AccountException {
         try {
             rentDb.commit();
-        } catch (BankDBException bdbe) {
+        } catch (SGMusicException bdbe) {
             throw new AccountException(failureMsg, bdbe);
         }
     }

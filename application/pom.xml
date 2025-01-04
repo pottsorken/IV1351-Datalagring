@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>se.kth.id1212</groupId>
-    <artifactId>jdbc-bank</artifactId>
+    <groupId>iv1351</groupId>
+    <artifactId>sgmusic-application</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <properties>
@@ -36,7 +36,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>se.kth.iv1351.bankjdbc.startup.Main</mainClass>
+                    <mainClass>sgmusic.startup.Main</mainClass>
                     <cleanupDaemonThreads>false</cleanupDaemonThreads>
                 </configuration>
             </plugin>

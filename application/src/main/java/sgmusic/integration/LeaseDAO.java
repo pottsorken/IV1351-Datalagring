@@ -21,21 +21,22 @@
  * THE SOFTWARE.
  */
 
-package se.kth.iv1351.bankjdbc.integration;
+package sgmusic.integration;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import sgmusic.model.Instrument;
+import sgmusic.model.Lease;
+import sgmusic.model.LeaseDTO;
+import java.sql.DriverManager;
+import java.sql.Connection;
 
-import se.kth.iv1351.bankjdbc.model.Lease;
-import se.kth.iv1351.bankjdbc.model.LeaseDTO;
 
-import se.kth.iv1351.bankjdbc.model.Instrument;
-import se.kth.iv1351.bankjdbc.model.InstrumentDTO;
+
+
 
 /**
  * This data access object (DAO) encapsulates all database calls in the bank
@@ -86,25 +87,16 @@ public class LeaseDAO {
     private PreparedStatement findLeaseByLeaseStmt;
     private PreparedStatement findInstrumentByNoStmt;
 
-    // private PreparedStatement createHolderStmt;
-    // private PreparedStatement findHolderPKStmt;
-    // private PreparedStatement createAccountStmt;
-    // private PreparedStatement findAccountByNameStmt;
-    // private PreparedStatement findAccountByAcctNoStmt;
-    // private PreparedStatement findAccountByAcctNoStmtLockingForUpdate;
-    // private PreparedStatement findAllAccountsStmt;
-    // private PreparedStatement deleteAccountStmt;
-    // private PreparedStatement changeBalanceStmt;
 
     /**
      * Constructs a new DAO object connected to the bank database.
      */
-    public LeaseDAO() throws BankDBException {
+    public LeaseDAO() throws SGMusicException {
         try {
             connectToBankDB();
             prepareStatements();
         } catch (ClassNotFoundException | SQLException exception) {
-            throw new BankDBException("Could not connect to datasource.", exception);
+            throw new SGMusicException("Could not connect to datasource.", exception);
         }
     }
 
@@ -112,9 +104,9 @@ public class LeaseDAO {
      * Creates a new lease.
      *
      * @param account The lease to create.
-     * @throws BankDBException If failed to create the specified account.
+     * @throws SGMusicException If failed to create the specified account.
      */
-    public void createLease(LeaseDTO lease) throws BankDBException { // NOTE: LeaseDTO may be Lease
+    public void createLease(LeaseDTO lease) throws SGMusicException { // NOTE: LeaseDTO may be Lease
         String failureMsg = "Could not create the lease: " + lease;
         int updatedRows = 0;
         try {
@@ -142,59 +134,15 @@ public class LeaseDAO {
         }
     }
 
-    /// **
-    // * Searches for the account with the specified account number.
-    // *
-    // * @param acctNo The account number.
-    // * @param lockExclusive If true, it will not be possible to perform UPDATE
-    // * or DELETE statements on the selected row in the
-    // * current transaction. Also, the transaction will not
-    // * be committed when this method returns. If false, no
-    // * exclusive locks will be created, and the transaction
-    // * will be committed when this method returns.
-    // * @return The account with the specified account number, or <code>null</code>
-    // * if there is no such account.
-    // * @throws BankDBException If failed to search for the account.
-    // */
-    // public Account findAccountByAcctNo(String acctNo, boolean lockExclusive)
-    // throws BankDBException {
-    // PreparedStatement stmtToExecute;
-    // if (lockExclusive) {
-    // stmtToExecute = findAccountByAcctNoStmtLockingForUpdate;
-    // } else {
-    // stmtToExecute = findAccountByAcctNoStmt;
-    // }
-    //
-    // String failureMsg = "Could not search for specified account.";
-    // ResultSet result = null;
-    // try {
-    // stmtToExecute.setString(1, acctNo);
-    // result = stmtToExecute.executeQuery();
-    // if (result.next()) {
-    // return new Account(result.getString(LEASE_ID_COLUMN_NAME),
-    // result.getString(LESSEE_NAME_COLUMN_NAME),
-    // result.getInt(BALANCE_COLUMN_NAME));
-    // }
-    // if (!lockExclusive) {
-    // connection.commit();
-    // }
-    // } catch (SQLException sqle) {
-    // handleException(failureMsg, sqle);
-    // } finally {
-    // closeResultSet(failureMsg, result);
-    // }
-    // return null;
-    // }
-
     /**
      * Searches for all accounts whose holder has the specified name.
      *
      * @param holderName The account holder's name
      * @return A list with all accounts whose holder has the specified name,
      *         the list is empty if there are no such account.
-     * @throws BankDBException If failed to search for accounts.
+     * @throws SGMusicException If failed to search for accounts.
      */
-    public List<Lease> findLeasesByLessee(int lesseeNo) throws BankDBException {
+    public List<Lease> findLeasesByLessee(int lesseeNo) throws SGMusicException {
         String failureMsg = "Could not search for specified leases.";
         ResultSet result = null;
         List<Lease> leases = new ArrayList<>();
@@ -220,9 +168,9 @@ public class LeaseDAO {
      * @param holderName The account holder's name
      * @return A list with all accounts whose holder has the specified name,
      *         the list is empty if there are no such account.
-     * @throws BankDBException If failed to search for accounts.
+     * @throws SGMusicException If failed to search for accounts.
      */
-    public Lease findLeaseByLease(int leaseNo) throws BankDBException {
+    public Lease findLeaseByLease(int leaseNo) throws SGMusicException {
         String failureMsg = "Could not search for specified lease.";
         ResultSet result = null;
         Lease leases = null;
@@ -247,9 +195,9 @@ public class LeaseDAO {
      *
      * @return A list with all existing leases. The list is empty if there are no
      *         accounts.
-     * @throws BankDBException If failed to search for leases.
+     * @throws SGMusicException If failed to search for leases.
      */
-    public List<Lease> findAllLeases() throws BankDBException {
+    public List<Lease> findAllLeases() throws SGMusicException {
         String failureMsg = "Could not list leases.";
         List<Lease> leases = new ArrayList<>();
         try (ResultSet result = findAllLeasesStmt.executeQuery()) {
@@ -265,88 +213,14 @@ public class LeaseDAO {
         return leases;
     }
 
-    /// **
-    // * Searches for all accounts whose holder has the specified name.
-    // *
-    // * @param holderName The account holder's name
-    // * @return A list with all accounts whose holder has the specified name,
-    // * the list is empty if there are no such account.
-    // * @throws BankDBException If failed to search for accounts.
-    // */
-    // public List<Lease> findLeasesByLessee(int lesseeNo) throws BankDBException {
-    // String failureMsg = "Could not search for specified leases.";
-    // ResultSet result = null;
-    // List<Lease> leases = new ArrayList<>();
-    // try {
-    // findLeasesByStudentStmt.setInt(1, lesseeNo);
-    // result = findLeasesByStudentStmt.executeQuery();
-    // while (result.next()) {
-    // leases.add(new Lease(result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
-    // result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME)));
-    // }
-    // connection.commit();
-    // } catch (SQLException sqle) {
-    // handleException(failureMsg, sqle);
-    // } finally {
-    // closeResultSet(failureMsg, result);
-    // }
-    // return leases;
-    // }
-    //
-    /// **
-    // * Retrieves all existing leases.
-    // *
-    // * @return A list with all existing leases. The list is empty if there are no
-    // * accounts.
-    // * @throws BankDBException If failed to search for leases.
-    // */
-    // public List<Lease> findAllLessees() throws BankDBException {
-    // String failureMsg = "Could not list lessees.";
-    // List<Lease> leases = new ArrayList<>();
-    // try (ResultSet result = findAllLeasesStmt.executeQuery()) {
-    // while (result.next()) {
-    // // lessee no, instrument no
-    // leases.add(new Lease(result.getInt(LEASE_LESSEE_FK_COLUMN_NAME),
-    // result.getInt(LEASE_INSTRUMENT_FK_COLUMN_NAME)));
-    // }
-    // connection.commit();
-    // } catch (SQLException sqle) {
-    // handleException(failureMsg, sqle);
-    // }
-    // return leases;
-    // }
-
-    /// **
-    // * Changes the balance of the account with the number of the specified
-    // * <code>AccountDTO</code> object. The balance is set to the value in the
-    // * specified <code>AccountDTO</code>.
-    // *
-    // * @param account The account to update.
-    // * @throws BankDBException If unable to update the specified account.
-    // */
-    // public void updateAccount(AccountDTO account) throws BankDBException {
-    // String failureMsg = "Could not update the account: " + account;
-    // try {
-    // changeBalanceStmt.setInt(1, account.getBalance());
-    // changeBalanceStmt.setString(2, account.getAccountNo());
-    // int updatedRows = changeBalanceStmt.executeUpdate();
-    // if (updatedRows != 1) {
-    // handleException(failureMsg, null);
-    // }
-    // connection.commit();
-    // } catch (SQLException sqle) {
-    // handleException(failureMsg, sqle);
-    // }
-    // }
-
     /**
      * Changes the lease with the specified lease number.
      *
      * @param leaseNo The lease to change.
      * @param active  The state to change lease to.
-     * @throws BankDBException If unable to delete the specified account.
+     * @throws SGMusicException If unable to delete the specified account.
      */
-    public void changeLease(int leaseNo, boolean active) throws BankDBException {
+    public void changeLease(int leaseNo, boolean active) throws SGMusicException {
         String failureMsg = "Could not change lease: " + leaseNo;
         try {
             changeLeaseStmt.setBoolean(1, active);
@@ -365,9 +239,9 @@ public class LeaseDAO {
     *
     * @param studentNo The student to change.
     * @param newQuota  The quota to change to.
-    * @throws BankDBException If unable to delete the specified account.
+    * @throws SGMusicException If unable to delete the specified account.
     */
-   public void changeLessee(int studentNo, int newQuota) throws BankDBException {
+   public void changeLessee(int studentNo, int newQuota) throws SGMusicException {
        String failureMsg = "Could not change student: " + studentNo;
        try {
             changeStudentStmt.setInt(1, newQuota);
@@ -388,9 +262,9 @@ public class LeaseDAO {
      *
      * @param instrumentNo The instrument to change.
      * @param onLease      The state to change instrument to.
-     * @throws BankDBException If unable to change the specified account.
+     * @throws SGMusicException If unable to change the specified account.
      */
-    public void changeInstrument(int instrumentNo, boolean onLease) throws BankDBException {
+    public void changeInstrument(int instrumentNo, boolean onLease) throws SGMusicException {
         String failureMsg = "Could not change instrument: " + instrumentNo;
         try {
             changeInstrumentStmt.setBoolean(1, onLease);
@@ -411,9 +285,9 @@ public class LeaseDAO {
      * @return A list with all existing instruments. The list is empty if there are
      *         no
      *         instruments.
-     * @throws BankDBException If failed to search for instruments.
+     * @throws SGMusicException If failed to search for instruments.
      */
-    public List<Instrument> findAllInstruments() throws BankDBException {
+    public List<Instrument> findAllInstruments() throws SGMusicException {
         String failureMsg = "Could not list instruments.";
         List<Instrument> instruments = new ArrayList<>();
         try (ResultSet result = findAllInstrumentsStmt.executeQuery()) {
@@ -436,9 +310,9 @@ public class LeaseDAO {
      * @param typeNo The instruments's type number
      * @return A list with all instruments whose type has the specified id,
      *         the list is empty if there are no such account.
-     * @throws BankDBException If failed to search for instruments.
+     * @throws SGMusicException If failed to search for instruments.
      */
-    public Instrument findInstrumentById(int instrumentNo) throws BankDBException {
+    public Instrument findInstrumentById(int instrumentNo) throws SGMusicException {
         String failureMsg = "Could not search for specified instrument.";
         ResultSet result = null;
         Instrument instr = null;
@@ -465,9 +339,9 @@ public class LeaseDAO {
      * @param typeNo The instruments's type number
      * @return A list with all instruments whose type has the specified id,
      *         the list is empty if there are no such account.
-     * @throws BankDBException If failed to search for instruments.
+     * @throws SGMusicException If failed to search for instruments.
      */
-    public List<Instrument> findInstrumentsByType(String typeName) throws BankDBException {
+    public List<Instrument> findInstrumentsByType(String typeName) throws SGMusicException {
         String failureMsg = "Could not search for specified instruments.";
         ResultSet result = null;
         List<Instrument> instruments = new ArrayList<>();
@@ -493,9 +367,9 @@ public class LeaseDAO {
     /**
      * Commits the current transaction.
      * 
-     * @throws BankDBException If unable to commit the current transaction.
+     * @throws SGMusicException If unable to commit the current transaction.
      */
-    public void commit() throws BankDBException {
+    public void commit() throws SGMusicException {
         try {
             connection.commit();
         } catch (SQLException e) {
@@ -638,7 +512,7 @@ public class LeaseDAO {
         // + " WHERE " + LEASE_ID_COLUMN_NAME + " = ?");
     }
 
-    private void handleException(String failureMsg, Exception cause) throws BankDBException {
+    private void handleException(String failureMsg, Exception cause) throws SGMusicException {
         String completeFailureMsg = failureMsg;
         try {
             connection.rollback();
@@ -648,17 +522,17 @@ public class LeaseDAO {
         }
 
         if (cause != null) {
-            throw new BankDBException(failureMsg, cause);
+            throw new SGMusicException(failureMsg, cause);
         } else {
-            throw new BankDBException(failureMsg);
+            throw new SGMusicException(failureMsg);
         }
     }
 
-    private void closeResultSet(String failureMsg, ResultSet result) throws BankDBException {
+    private void closeResultSet(String failureMsg, ResultSet result) throws SGMusicException {
         try {
             result.close();
         } catch (Exception e) {
-            throw new BankDBException(failureMsg + " Could not close result set.", e);
+            throw new SGMusicException(failureMsg + " Could not close result set.", e);
         }
     }
 

@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-package se.kth.iv1351.bankjdbc.model;
+package sgmusic.model;
 
 /**
  * Thrown when deposit or withdrawal fails.

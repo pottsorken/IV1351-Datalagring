@@ -22,38 +22,25 @@
  * THE SOFTWARE.
  */
 
-package se.kth.iv1351.bankjdbc.view;
+package sgmusic.startup;
+
+import sgmusic.integration.SGMusicException;
+import sgmusic.view.BlockingInterpreter;
+import sgmusic.controller.Controller;
 
 /**
- * Defines all commands that can be performed by a user of the chat application.
+ * Starts the bank client.
  */
-public enum Command {
+public class Main {
     /**
-     * Lists all free instruments.
+     * @param args There are no command line arguments.
      */
-    LISTINSTR,
-    /**
-     * Lists all existing leases.
-     */
-    LISTLEASE,
-    /**
-     * Terminates the specified lease.
-     */
-    TERMINATE,
-    /**
-     * Open a new lease for the specified person and instrument
-     */
-    RENT,
-    /**
-     * Lists all commands.
-     */
-    HELP,
-    /**
-     * Leave the chat application.
-     */
-    QUIT,
-    /**
-     * None of the valid commands above was specified.
-     */
-    ILLEGAL_COMMAND
+    public static void main(String[] args) {
+        try {
+            new BlockingInterpreter(new Controller()).handleCmds();
+        } catch (SGMusicException bdbe) {
+            System.out.println("Could not connect to Bank db.");
+            bdbe.printStackTrace();
+        }
+    }
 }

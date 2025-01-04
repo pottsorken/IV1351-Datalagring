@@ -1,13 +1,14 @@
 /*
- * The MIT License (MIT)
- * Copyright (c) 2020 Leif Lindbäck
+ * The MIT License
+ *
+ * Copyright 2017 Leif Lindbäck <leifl@kth.se>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction,including without limitation the rights
+ * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so,subject to the following conditions:
+ * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
@@ -21,24 +22,38 @@
  * THE SOFTWARE.
  */
 
-package se.kth.iv1351.bankjdbc.model;
+package sgmusic.view;
 
 /**
- * Specifies a read-only view of an account.
+ * Defines all commands that can be performed by a user of the chat application.
  */
-public interface AccountDTO {
+public enum Command {
     /**
-     * @return The account number.
+     * Lists all free instruments.
      */
-    public String getAccountNo();
-
+    LISTINSTR,
     /**
-     * @return The balance.
+     * Lists all existing leases.
      */
-    public int getBalance();
-
+    LISTLEASE,
     /**
-     * @return The holder's name.
+     * Terminates the specified lease.
      */
-    public String getHolderName();
+    TERMINATE,
+    /**
+     * Open a new lease for the specified person and instrument
+     */
+    RENT,
+    /**
+     * Lists all commands.
+     */
+    HELP,
+    /**
+     * Leave the chat application.
+     */
+    QUIT,
+    /**
+     * None of the valid commands above was specified.
+     */
+    ILLEGAL_COMMAND
 }

@@ -1,5 +1,5 @@
 
-package se.kth.iv1351.bankjdbc.model;
+package sgmusic.model;
 
 /**
  * Lease
