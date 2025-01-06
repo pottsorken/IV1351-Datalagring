@@ -81,6 +81,7 @@ public class Controller {
                 commitOngoingTransaction(failureMsg);
             }
         } catch (Exception e) {
+            rollbackOngoingTransaction(failureMsg);
             throw new AccountException(failureMsg, e);
         }
     }
@@ -99,6 +100,7 @@ public class Controller {
             commitOngoingTransaction("Unable to list leases.");
             return leases;
         } catch (Exception e) {
+            rollbackOngoingTransaction("Unable to list leases.");
             throw new AccountException("Unable to list leases.", e);
         }
     }
@@ -123,6 +125,7 @@ public class Controller {
             commitOngoingTransaction("Could not search for lease.");
             return leases;
         } catch (Exception e) {
+            rollbackOngoingTransaction("Could not search for lease.");
             throw new AccountException("Could not search for lease.", e);
         }
     }
@@ -145,6 +148,7 @@ public class Controller {
             commitOngoingTransaction("Could not search for lease.");
             return lease;
         } catch (Exception e) {
+            rollbackOngoingTransaction("Could not search for lease.");
             throw new AccountException("Could not search for lease.", e);
         }
     }
@@ -163,6 +167,7 @@ public class Controller {
             commitOngoingTransaction("Unable to list instruments.");
             return instruments;
         } catch (Exception e) {
+            rollbackOngoingTransaction("Unable to list instruments.");
             throw new AccountException("Unable to list instruments.", e);
         }
     }
@@ -187,6 +192,7 @@ public class Controller {
             commitOngoingTransaction("Could not search for instruments.");
             return instruments;
         } catch (Exception e) {
+            rollbackOngoingTransaction("Could not search for instruments.");
             throw new AccountException("Could not search for instruments.", e);
         }
     }
@@ -194,6 +200,14 @@ public class Controller {
     private void commitOngoingTransaction(String failureMsg) throws AccountException {
         try {
             rentDb.commit();
+        } catch (SGMusicException bdbe) {
+            throw new AccountException(failureMsg, bdbe);
+        }
+    }
+
+    private void rollbackOngoingTransaction(String failureMsg) throws AccountException {
+        try {
+            rentDb.rollback();
         } catch (SGMusicException bdbe) {
             throw new AccountException(failureMsg, bdbe);
         }
@@ -211,15 +225,23 @@ public class Controller {
         if (leaseNo <= 0) {
             throw new AccountException(failureMsg);
         }
-        Lease ls = getLeaseForLeaseNo(leaseNo);
         try {
-            int quota = rentDb.findQuotaByPK(ls.getLessee());
-            // rentDb.changeInstrument(instrumentNo, false);
-            rentDb.changeInstrument(ls.getInstrument(), false);
-            rentDb.changeLessee(ls.getLessee(), quota + 1);
-            rentDb.changeLease(leaseNo, false);
+            Lease ls = getLeaseForLeaseNo(leaseNo);
+            if (ls.getLeaseState() == true) {
+
+                int quota = rentDb.findQuotaByPK(ls.getLessee());
+                // rentDb.changeInstrument(instrumentNo, false);
+                rentDb.changeInstrument(ls.getInstrument(), false);
+                rentDb.changeLessee(ls.getLessee(), quota + 1);
+                rentDb.changeLease(leaseNo, false);
+
+            }
+            else{
+                System.out.println("Lease is already terminated.");
+            }
             commitOngoingTransaction(failureMsg);
         } catch (Exception e) {
+            rollbackOngoingTransaction(failureMsg);
             throw new AccountException(failureMsg, e);
         }
     }

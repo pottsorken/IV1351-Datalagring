@@ -363,6 +363,14 @@ public class LeaseDAO {
         }
     }
 
+    public void rollback() throws SGMusicException {
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            handleException("Failed to rollback", e);
+        }
+    }
+
     private void connectToSGMusic() throws ClassNotFoundException, SQLException {
         connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/soundgoodmusic",
                 "broli", "12345");
