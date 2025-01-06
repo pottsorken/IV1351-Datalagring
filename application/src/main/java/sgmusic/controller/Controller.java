@@ -68,7 +68,7 @@ public class Controller {
         try {
             int quota = rentDb.findQuotaByPK(lesseeNo);
 
-            System.out.println(quota);
+            //System.out.println(quota);
             Instrument instr = rentDb.findInstrumentById(instrumentNo);
             
             if (quota <= 0 || instr.getOnLease() == true) {

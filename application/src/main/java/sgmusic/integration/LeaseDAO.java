@@ -408,7 +408,7 @@ public class LeaseDAO {
                 "SELECT l." + LOOKUP_INSTRUMENT_COLUMN_NAME + " FROM " + LOOKUP_INSTRUMENT_TABLE_NAME + " AS l");
 
         findQuotaByStudentStmt = connection.prepareStatement("SELECT s." + LESSEE_QUOTA_COLUMN_NAME + " FROM "
-                + LESSEE_TABLE_NAME + " AS s WHERE s." + LESSEE_PK_COLUMN_NAME + " = ?");
+                + LESSEE_TABLE_NAME + " AS s WHERE s." + LESSEE_PK_COLUMN_NAME + " = ? FOR UPDATE");
 
         findAllLeasesStmt = connection
                 .prepareStatement(
